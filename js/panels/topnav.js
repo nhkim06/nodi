@@ -2,11 +2,8 @@
 // + 원근 그리드 배경(.bg-grid)을 body 맨 앞에 한 번 넣는다.
 import { h } from '../utils/dom.js';
 
-export function logoMark(size = 28) {
-  return h('img', { class: 'logo__mark', src: 'favicon.svg', width: size, height: size, alt: '' });
-}
-
-export const logo = (href = 'index.html#/home') => h('a', { class: 'logo', href, 'aria-label': 'NO:DI 홈' }, logoMark(), h('span', {}, 'NO:DI'));
+export const logo = (href = 'index.html#/home') => h('a', { class: 'logo', href, 'aria-label': 'NO:DI 홈' },
+  h('img', { class: 'logo__mark', src: 'logo.svg', width: 114, height: 32, alt: '' }));
 
 const LINKS = [
   { id: 'home', label: 'Home', href: 'index.html#/home' },
