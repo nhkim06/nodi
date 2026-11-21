@@ -469,7 +469,7 @@ function renderMine(s) {
       myTasks.slice(0, 8).map((t) => h('label', { class: 'todo' },
         h('input', { type: 'checkbox', onchange: () => updateTask(t.id, { done: true }).catch(() => {}) }),
         h('span', { class: 'todo__text', title: s.nodes.get(t.node_id)?.title }, t.content)))),
-    h('a', { class: 'btn btn--sm', style: { marginTop: '12px' }, href: `me.html?project=${s.project.id}` }, '칸반 · 작업 기록 보기 →'),
+    h('a', { class: 'btn btn--sm', style: { marginTop: '12px' }, href: `me.html?project=${s.project.id}` }, '작업 기록 보기'),
   ], true));
 }
 
