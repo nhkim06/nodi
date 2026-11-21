@@ -146,7 +146,7 @@ export async function aiGenerate(parentIds, { count = 5, hint = '' } = {}) {
     for (const n of res.nodes ?? []) nodesApi.upsertNodeLocal(n);
     for (const p of res.plans ?? []) upsertPlanLocal(p, true);
     if (!res.nodeIds?.length) return toast('새 아이디어를 만들지 못했어요. 다른 요청으로 다시 시도해 보세요.');
-    toast(`✨ 아이디어 ${res.nodeIds.length}개를 추가했어요.`);
+    toast(`아이디어 ${res.nodeIds.length}개를 추가했어요.`);
     requestAnimationFrame(() => requestAnimationFrame(() => {
       flashNodes(res.nodeIds);
       fitTo([...ids, ...res.nodeIds]);
@@ -167,7 +167,7 @@ export async function aiConcretize(nodeId, { overwrite = false } = {}) {
       runAI('concretize_node', { nodeId, overwrite }, { quietStatuses: [409] }));
     if (res.plan) upsertPlanLocal(res.plan, true);
     replaceAiTasksLocal(nodeId, res.tasks ?? []);
-    toast(`🧭 우리 팀 기준 실행 계획${res.tasks?.length ? `과 할 일 ${res.tasks.length}개` : ''}를 만들었어요.`);
+    toast(`우리 팀 기준 실행 계획${res.tasks?.length ? `과 할 일 ${res.tasks.length}개` : ''}를 만들었어요.`);
   } catch (e) {
     if (e.status === 409 && !overwrite) {
       const ok = await confirmModal('팀원이 직접 수정한 실행 계획이 있어요.\nAI가 새로 구체화한 내용으로 덮어쓸까요?', { okText: '덮어쓰기' });
@@ -229,7 +229,7 @@ export async function aiDirection(focusIds) {
     });
     replaceCommentsLocal([], res.comments ?? []);
     if (res.comments?.length) {
-      toast(`💡 방향 ${res.comments.length}개를 추천했어요.`);
+      toast(`방향 ${res.comments.length}개를 추천했어요.`);
       mutate('expandedBubbles', (s) => ids.forEach((id) => s.add(id)));
     }
   } catch { /* runAI 가 토스트 */ }

@@ -83,7 +83,7 @@ export function openDocModal() {
     class: 'textarea', rows: '12', placeholder: '과제 공지/요구사항 텍스트를 붙여넣거나, 위에서 파일을 올리면 추출된 텍스트가 여기에 보여요.\n(HWP는 PDF로 저장해서 올려 주세요)',
   });
   const zone = h('div', { class: 'drop-zone', tabindex: '0', onclick: () => fileInput.click() },
-    '📄 PDF / DOCX / TXT / MD 파일을 끌어다 놓거나 클릭해서 선택');
+    'PDF / DOCX / TXT / MD 파일을 끌어다 놓거나 클릭해서 선택');
 
   const pick = async (f) => {
     if (!f) return;
@@ -95,7 +95,7 @@ export function openDocModal() {
       status.textContent = `✓ ${f.name} — ${text.length.toLocaleString()}자 추출됨. 아래 내용을 확인하고 분석을 시작하세요.`;
     } catch (e) {
       file = null;
-      status.textContent = `⚠️ ${e.message}`;
+      status.textContent = e.message;
     }
   };
   fileInput.addEventListener('change', () => pick(fileInput.files[0]));
@@ -109,7 +109,7 @@ export function openDocModal() {
   });
   textArea.addEventListener('input', () => { if (!textArea.value.trim()) file = null; });
 
-  const submit = h('button', { class: 'btn btn--primary' }, '✨ 요구사항 분석');
+  const submit = h('button', { class: 'btn btn--primary' }, '요구사항 분석');
   const m = openModal({
     title: '과제 문서 올리기',
     wide: true,
@@ -128,7 +128,7 @@ export function openDocModal() {
       doc = await saveDoc({ file, text, fileName: file?.name });
     } catch {
       submit.disabled = false;
-      submit.textContent = '✨ 요구사항 분석';
+      submit.textContent = '요구사항 분석';
       return;
     }
     m.close();
@@ -148,7 +148,7 @@ export async function analyzeDoc(docId) {
     await reloadRequirements();
     setState({ docs: getState().docs.map((d) => (d.id === docId ? { ...d, analyzed_at: new Date().toISOString() } : d)) });
     progress.close();
-    toast(`📄 요구사항 ${res.requirements?.length ?? 0}개를 추출했어요.${res.truncated ? ' (문서가 너무 길어 뒷부분은 생략됐어요)' : ''}`, { duration: 4000 });
+    toast(`요구사항 ${res.requirements?.length ?? 0}개를 추출했어요.${res.truncated ? ' (문서가 너무 길어 뒷부분은 생략됐어요)' : ''}`, { duration: 4000 });
     if (res.summary) {
       const project = getState().project;
       if (!project.description) setState({ project: { ...project, description: res.summary } });
@@ -169,7 +169,7 @@ export function openGenerateModal(parentIds) {
   const go = () => { m.close(); aiGenerate(targets, { count: Number(count.value), hint: hint.value.trim() }); };
   hint.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.isComposing) go(); });
   const m = openModal({
-    title: '✨ AI 아이디어 생성',
+    title: 'AI 아이디어 생성',
     body: [
       h('p', { class: 'small muted', style: { marginBottom: '12px' } },
         '부모 노드: ', targets.map((id) => nodes.get(id)?.title).join(', ')),
@@ -190,7 +190,7 @@ export function showReviewResult(res) {
   const { members } = getState();
 
   const m = openModal({
-    title: '🔍 전체 점검 결과',
+    title: '전체 점검 결과',
     wide: true,
     body: [
       res.summary && h('div', { class: 'summary-box' }, res.summary),
@@ -210,7 +210,7 @@ export function showReviewResult(res) {
                 }, nodes.get(id).title))),
             ));
         })),
-      capGaps.length > 0 && h('div', { class: 'card__title', style: { marginTop: '16px' } }, '🧑‍🔧 팀 역량 공백'),
+      capGaps.length > 0 && h('div', { class: 'card__title', style: { marginTop: '16px' } }, '팀 역량 공백'),
       capGaps.map((g) => {
         const targets = g.node_ids.filter((id) => nodes.has(id));
         return h('div', { class: 'check-row', style: { cursor: 'default' } },
@@ -224,9 +224,9 @@ export function showReviewResult(res) {
           targets.length > 0 && h('button', {
             class: 'btn btn--sm',
             onclick: (e) => { e.target.disabled = true; m.close(); selectOnly(targets[0]); aiConcretize(targets[0]); },
-          }, '🧭 이 노드 다시 구체화'));
+          }, '이 노드 다시 구체화'));
       }),
-      gaps.length > 0 && h('div', { class: 'card__title', style: { marginTop: '16px' } }, '🧩 빠진 부분'),
+      gaps.length > 0 && h('div', { class: 'card__title', style: { marginTop: '16px' } }, '빠진 부분'),
       gaps.map((g) => h('div', { class: 'check-row', style: { cursor: 'default' } },
         h('div', { class: 'grow' },
           h('b', {}, g.content.split('\n')[0]),
@@ -265,7 +265,7 @@ export function showRolesResult(res) {
 
   const apply = h('button', { class: 'btn btn--primary', disabled: !rows.length }, '선택 항목 적용');
   const m = openModal({
-    title: '👥 역할 분담 추천', wide: true, body,
+    title: '역할 분담 추천', wide: true, body,
     footer: [h('button', { class: 'btn', onclick: () => m.close() }, '닫기'), apply],
   });
   apply.addEventListener('click', async () => {
@@ -282,7 +282,7 @@ export function showRolesResult(res) {
 
 // 🔗 링크 추가 --------------------------------------------------------------------
 export function openLinkModal(nodeId = null) {
-  const kind = h('select', { class: 'select' }, Object.entries(LINK_KINDS).map(([k, v]) => h('option', { value: k }, `${v.icon} ${v.label}`)));
+  const kind = h('select', { class: 'select' }, Object.entries(LINK_KINDS).map(([k, v]) => h('option', { value: k }, v.label)));
   const title = h('input', { class: 'input', maxlength: '80', placeholder: '예) 1차 회의록' });
   const url = h('input', { class: 'input', type: 'url', placeholder: 'https://' });
   url.addEventListener('input', () => {
@@ -303,7 +303,7 @@ export function openLinkModal(nodeId = null) {
     } catch { /* 토스트 처리됨 */ }
   };
   const m = openModal({
-    title: '🔗 작업 링크 추가',
+    title: '작업 링크 추가',
     body: [
       node && h('p', { class: 'small muted', style: { marginBottom: '8px' } }, `연결할 노드: ${node.title}`),
       h('div', { class: 'field' }, h('label', {}, '주소'), url),
@@ -337,19 +337,19 @@ export function openPraiseModal(toUser = null) {
     try {
       await sendPraise({ projectId: project.id, toUser: who.value, message, tag });
       m.close();
-      toast('👍 좋아요를 보냈어요! 칭찬 온도가 올라가요.');
+      toast('좋아요를 보냈어요! 칭찬 온도가 올라가요.');
       refreshTemperatures(project.id);
     } catch { /* 토스트 처리됨 */ }
   };
   const m = openModal({
-    title: '👍 팀원에게 좋아요 보내기',
+    title: '팀원에게 좋아요 보내기',
     body: [
       h('div', { class: 'field' }, h('label', {}, '누구를?'), who),
       h('div', { class: 'field' }, h('label', {}, '태그 (선택)'), h('div', { class: 'row row--wrap' }, tagBtns)),
       h('div', { class: 'field' }, h('label', {}, '메시지 (선택)'), msg),
       h('p', { class: 'small faint' }, '같은 팀원에게는 하루 한 번 보낼 수 있어요. 좋아요 1번에 +0.3℃!'),
     ],
-    footer: [h('button', { class: 'btn', onclick: () => m.close() }, '취소'), h('button', { class: 'btn btn--primary', onclick: send }, '👍 보내기')],
+    footer: [h('button', { class: 'btn', onclick: () => m.close() }, '취소'), h('button', { class: 'btn btn--primary', onclick: send }, '보내기')],
   });
 }
 
@@ -368,12 +368,12 @@ export async function openHelpModal(message) {
   const { members } = getState();
   const helpers = (res.helpers ?? []).filter((id) => members.has(id));
   const m = openModal({
-    title: '🔴 막힘 도움',
+    title: '막힘 도움',
     body: [
-      h('div', { class: 'card__title' }, '💡 이렇게 해 보세요'),
+      h('div', { class: 'card__title' }, '이렇게 해 보세요'),
       h('ol', { style: { paddingLeft: '20px', margin: '0 0 12px' } }, (res.tips ?? []).map((t) => h('li', { style: { marginBottom: '6px' } }, t))),
       helpers.length > 0 && [
-        h('div', { class: 'card__title' }, '🙋 도와줄 수 있는 팀원'),
+        h('div', { class: 'card__title' }, '도와줄 수 있는 팀원'),
         res.helper_reason && h('p', { class: 'small muted', style: { marginBottom: '8px' } }, res.helper_reason),
         helpers.map((uid) => h('div', { class: 'row', style: { marginBottom: '6px' } },
           avatar(members.get(uid)), h('span', { class: 'grow' }, members.get(uid).profile?.display_name ?? '팀원'),
@@ -395,7 +395,7 @@ export function openExperienceModal({ onboarding = false } = {}) {
   const { user } = getState();
   const editor = experienceEditor({ userId: user.id });
   const m = openModal({
-    title: onboarding ? '🙋 우리 팀 AI가 실행 가능한 범위를 정하려면 경험이 필요해요' : '🙋 내 경험 카드',
+    title: onboarding ? '우리 팀 AI가 실행 가능한 범위를 정하려면 경험이 필요해요' : '내 경험 카드',
     wide: true,
     body: [
       h('p', { class: 'small muted', style: { marginBottom: '8px' } },
@@ -465,15 +465,15 @@ export function openPlanEditModal(nodeId) {
 
   const save = h('button', { class: 'btn btn--primary' }, '저장');
   const m = openModal({
-    title: `✏️ 실행 계획 — ${node.title}`,
+    title: `실행 계획 — ${node.title}`,
     wide: true,
     body: [
       h('div', { class: 'row' }, h('div', { class: 'field' }, h('label', {}, '실행 가능성'), feas), h('div', { class: 'field grow' }, h('label', {}, '근거'), note)),
       h('div', { class: 'field' }, h('label', {}, '조사 방법'), methods.el),
-      h('div', { class: 'field' }, h('label', {}, '✅ MVP (반드시)'), mvp.el),
-      h('div', { class: 'field' }, h('label', {}, '➕ 여유 있으면'), stretch.el),
-      h('div', { class: 'field' }, h('label', {}, '🚫 범위 밖 (이번엔 안 함)'), out.el),
-      h('div', { class: 'field' }, h('label', {}, '⚠️ 리스크'), risks.el),
+      h('div', { class: 'field' }, h('label', {}, 'MVP (반드시)'), mvp.el),
+      h('div', { class: 'field' }, h('label', {}, '여유 있으면'), stretch.el),
+      h('div', { class: 'field' }, h('label', {}, '범위 밖 (이번엔 안 함)'), out.el),
+      h('div', { class: 'field' }, h('label', {}, '리스크'), risks.el),
       h('p', { class: 'small faint' }, '직접 수정한 계획은 AI가 다시 구체화하기 전에 덮어쓸지 확인해요.'),
     ],
     footer: [h('button', { class: 'btn', onclick: () => m.close() }, '취소'), save],

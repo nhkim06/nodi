@@ -4,11 +4,11 @@
 import { h } from './dom.js';
 
 export const EXP_KINDS = {
-  project: { label: '프로젝트', icon: '📁' },
-  research: { label: '조사·리서치', icon: '🔍' },
-  tool: { label: '도구·기술', icon: '🛠️' },
-  domain: { label: '도메인 지식', icon: '📚' },
-  role: { label: '역할', icon: '🎤' },
+  project: { label: '프로젝트' },
+  research: { label: '조사·리서치' },
+  tool: { label: '도구·기술' },
+  domain: { label: '도메인 지식' },
+  role: { label: '역할' },
 };
 
 export const EXP_LEVELS = { 1: '해봤음', 2: '혼자 할 수 있음', 3: '가르칠 수 있음' };

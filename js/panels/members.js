@@ -27,8 +27,8 @@ export function renderMembers(container, s) {
   }
 
   render(container,
-    h('div', { class: 'panel-title' }, '👥 팀원', h('span', { class: 'side-sec__count' }, String(list.length))),
-    h('p', { class: 'drop-hint' }, s.isDragging ? '👇 담당자로 지정할 팀원 위에 놓으세요' : '노드를 팀원 이름 위로 끌어다 놓으면 담당자로 지정돼요.'),
+    h('div', { class: 'panel-title' }, '팀원', h('span', { class: 'side-sec__count' }, String(list.length))),
+    h('p', { class: 'drop-hint' }, s.isDragging ? '담당자로 지정할 팀원 위에 놓으세요' : '노드를 팀원 이름 위로 끌어다 놓으면 담당자로 지정돼요.'),
     list.map((m) => memberEl(s, m, byMember.get(m.user_id) ?? [])),
   );
 }
@@ -50,12 +50,12 @@ function memberEl(s, m, tasks) {
     h('span', { class: ['signal-light', `signal-light--${sig === 'stale' ? 'yellow' : sig}`], title: sig === 'stale' ? '자리 비움?' : SIGNALS[sig]?.label }),
     avatar(m),
     h('div', { class: 'grow', style: { minWidth: '0' } },
-      h('div', { class: 'member__name ellipsis' }, m.profile?.display_name ?? '팀원', isMe ? ' (나)' : '', m.role === 'owner' ? ' 👑' : ''),
+      h('div', { class: 'member__name ellipsis' }, m.profile?.display_name ?? '팀원', isMe ? ' (나)' : '', m.role === 'owner' ? ' (팀장)' : ''),
       h('div', { class: 'member__role ellipsis' },
         m.role_label || '역할 미정', ' · ', sig === 'stale' ? '자리 비움?' : SIGNALS[sig]?.label)),
-    h('span', { class: 'member__temp', title: `받은 좋아요 ${m.praise_count ?? 0}번` }, `🌡️ ${(m.temperature ?? 36.5).toFixed(1)}℃`)),
+    h('span', { class: 'member__temp', title: `받은 좋아요 ${m.praise_count ?? 0}번` }, `${(m.temperature ?? 36.5).toFixed(1)}℃`)),
   h('div', { class: 'member__body' },
-    m.signal_message && h('div', { class: 'member__msg' }, `${SIGNALS[m.signal]?.emoji ?? ''} ${m.signal_message}`,
+    m.signal_message && h('div', { class: 'member__msg' }, m.signal_message,
       h('span', { class: 'faint' }, ` · ${relTime(m.signal_changed_at)}`)),
     isMe && h('div', { class: 'field' }, h('label', {}, '내 역할 라벨'),
       h('input', {
@@ -80,10 +80,10 @@ function memberEl(s, m, tasks) {
       ? h('p', { class: 'small faint' }, isMe ? '아직 없어요. 경험을 넣으면 AI가 우리 팀에 맞는 범위를 제안해요.' : '경험 정보 없음')
       : h('div', { class: 'row row--wrap' }, exps.map((ex) => h('span', {
         class: 'exp-chip', title: expTooltip(ex),
-      }, `${EXP_KINDS[ex.kind]?.icon ?? '📁'} ${ex.title} `, h('span', { class: 'exp-chip__level' }, levelDots(ex.level))))),
+      }, `${EXP_KINDS[ex.kind]?.label ?? '기타'} · ${ex.title} `, h('span', { class: 'exp-chip__level' }, levelDots(ex.level))))),
     h('div', { class: 'row', style: { marginTop: '8px' } },
-      isMe && h('button', { class: 'btn btn--sm', onclick: () => openExperienceModal() }, '🙋 내 경험 편집'),
-      !isMe && h('button', { class: 'btn btn--sm', onclick: () => openPraiseModal(m.user_id) }, '👍 좋아요'),
+      isMe && h('button', { class: 'btn btn--sm', onclick: () => openExperienceModal() }, '내 경험 편집'),
+      !isMe && h('button', { class: 'btn btn--sm', onclick: () => openPraiseModal(m.user_id) }, '좋아요'),
       s.helpRequests.has(m.user_id) && h('button', {
         class: 'btn btn--sm', onclick: () => mutate('helpRequests', (set) => set.delete(m.user_id)),
       }, '도움 요청 확인'))));

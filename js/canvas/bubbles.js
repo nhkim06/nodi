@@ -32,7 +32,7 @@ export function bubbleEl(c, reqMap, { compact = false, expMap = new Map() } = {}
 
   return h('div', { class: ['bubble', `bubble--${c.kind}`], dataset: { commentId: c.id } },
     h('div', { class: 'bubble__head' },
-      h('span', {}, kind.icon), h('span', {}, kind.label),
+      h('span', {}, kind.label),
       h('button', { class: 'bubble__x', title: '숨기기 (팀 전체)', 'aria-label': '말풍선 숨기기', onclick: () => dismissComment(c.id) }, '✕'),
     ),
     titled

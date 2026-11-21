@@ -19,10 +19,10 @@ export function avatar(member, { size } = {}) {
 }
 
 export const SIGNALS = {
-  green: { label: '진행 중', emoji: '🟢' },
-  yellow: { label: '쉬는 중', emoji: '🟡' },
-  red: { label: '막힘·도움 필요', emoji: '🔴' },
-  off: { label: '오프라인', emoji: '⚪' },
+  green: { label: '진행 중' },
+  yellow: { label: '쉬는 중' },
+  red: { label: '막힘·도움 필요' },
+  off: { label: '오프라인' },
 };
 
 export const STATUS = {
@@ -34,12 +34,12 @@ export const STATUS = {
 export const TASK_STATES = { todo: '할 일', doing: '진행 중', done: '완료' };
 
 export const LINK_KINDS = {
-  notion: { label: 'Notion', icon: '📝' },
-  meeting: { label: '회의록', icon: '🗒️' },
-  figma: { label: 'Figma', icon: '🎨' },
-  github: { label: 'GitHub', icon: '🐙' },
-  drive: { label: '드라이브', icon: '📁' },
-  other: { label: '기타', icon: '🔗' },
+  notion: { label: 'Notion' },
+  meeting: { label: '회의록' },
+  figma: { label: 'Figma' },
+  github: { label: 'GitHub' },
+  drive: { label: '드라이브' },
+  other: { label: '기타' },
 };
 
 export const REQ_CATEGORIES = {
@@ -48,11 +48,11 @@ export const REQ_CATEGORIES = {
 export const IMPORTANCE = { 3: '필수', 2: '중요', 1: '보통' };
 
 export const BUBBLE_KINDS = {
-  praise: { icon: '👍', label: '잘한 점' },
-  warning: { icon: '⚠️', label: '주의' },
-  suggestion: { icon: '💡', label: '제안' },
-  feedback: { icon: '💬', label: '피드백' },
-  gap: { icon: '🧩', label: '빠진 부분' },
+  praise: { label: '잘한 점' },
+  warning: { label: '주의' },
+  suggestion: { label: '제안' },
+  feedback: { label: '피드백' },
+  gap: { label: '빠진 부분' },
 };
 
 /** 담당자 신호등 표시가 오래된 green 이면 '자리 비움?' 으로 보정 */

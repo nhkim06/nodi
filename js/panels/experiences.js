@@ -37,7 +37,7 @@ export function experienceEditor({ userId, onChange, compact = false }) {
 
   function cardForm(initial, { onSubmit, onCancel, submitText }) {
     const kind = h('select', { class: 'select', 'aria-label': '종류' },
-      Object.entries(EXP_KINDS).map(([k, v]) => h('option', { value: k }, `${v.icon} ${v.label}`)));
+      Object.entries(EXP_KINDS).map(([k, v]) => h('option', { value: k }, v.label)));
     kind.value = initial.kind ?? 'project';
     const title = h('input', { class: 'input', maxlength: '60', placeholder: '예) 교내 앱 공모전 UI 디자인', value: initial.title ?? '' });
     const level = h('select', { class: 'select', 'aria-label': '숙련도' },
@@ -102,14 +102,14 @@ export function experienceEditor({ userId, onChange, compact = false }) {
       });
     }
     return h('div', { class: 'exp-card' },
-      h('span', { class: 'exp-card__icon', title: EXP_KINDS[ex.kind]?.label }, EXP_KINDS[ex.kind]?.icon ?? '📁'),
+      h('span', { class: 'small muted' }, EXP_KINDS[ex.kind]?.label ?? '기타'),
       h('div', { class: 'grow' },
         h('div', { class: 'exp-card__title' }, ex.title,
           h('span', { class: 'exp-card__level', title: EXP_LEVELS[ex.level] }, ` ${levelDots(ex.level)} ${EXP_LEVELS[ex.level] ?? ''}`)),
         ex.detail && h('div', { class: 'small muted' }, ex.detail),
         (ex.tags ?? []).length > 0 && h('div', { class: 'row row--wrap', style: { marginTop: '4px' } },
           ex.tags.map((t) => h('span', { class: 'chip chip--sm' }, `#${t}`)))),
-      h('button', { class: 'icon-btn', title: '수정', 'aria-label': '경험 카드 수정', onclick: () => { editingId = ex.id; draw(); } }, '✏️'),
+      h('button', { class: 'btn btn--sm btn--ghost', title: '수정', 'aria-label': '경험 카드 수정', onclick: () => { editingId = ex.id; draw(); } }, '수정'),
       h('button', {
         class: 'icon-btn', title: '삭제', 'aria-label': '경험 카드 삭제',
         onclick: async () => {
@@ -143,7 +143,7 @@ export function experienceEditor({ userId, onChange, compact = false }) {
           EXP_EXAMPLES.map((ex) => h('button', {
             class: 'chip', type: 'button',
             onclick: () => addForm._fill(ex),
-          }, `${EXP_KINDS[ex.kind].icon} ${ex.title}`))),
+          }, `${EXP_KINDS[ex.kind].label} · ${ex.title}`))),
         addForm),
     );
   }

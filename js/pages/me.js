@@ -51,10 +51,10 @@ async function load() {
 }
 
 const ACTIONS = {
-  node_created: (m) => `💡 '${m.title}' 노드를 만들었어요${m.source === 'ai' ? ' (AI)' : ''}`,
-  node_status_changed: (m) => `🔁 '${m.title}' 상태: ${STATUS[m.from] ?? m.from} → ${STATUS[m.to] ?? m.to}`,
-  node_assigned: (m) => `👤 '${m.title}' 담당자가 됐어요`,
-  task_state_changed: (m) => `✅ '${m.title}' 작업: ${TASK_STATES[m.from] ?? m.from} → ${TASK_STATES[m.to] ?? m.to}`,
+  node_created: (m) => `'${m.title}'노드를 만들었어요${m.source === 'ai' ? ' (AI)' : ''}`,
+  node_status_changed: (m) => `'${m.title}'상태: ${STATUS[m.from] ?? m.from} → ${STATUS[m.to] ?? m.to}`,
+  node_assigned: (m) => `'${m.title}'담당자가 됐어요`,
+  task_state_changed: (m) => `'${m.title}'작업: ${TASK_STATES[m.from] ?? m.from} → ${TASK_STATES[m.to] ?? m.to}`,
 };
 
 function kanban() {
@@ -83,7 +83,7 @@ function kanban() {
 }
 
 function todoList() {
-  if (!state.todos.length) return h('p', { class: 'muted small' }, '나에게 배정된 할 일이 없어요. 아이디어 맵에서 노드를 선택하고 ✨ AI로 할 일 목록을 만들어 보세요.');
+  if (!state.todos.length) return h('p', { class: 'muted small' }, '나에게 배정된 할 일이 없어요. 아이디어 맵에서 노드를 선택하고 AI로 할 일 목록을 만들어 보세요.');
   return state.todos.map((t) => h('label', { class: ['todo', t.done && 'todo--done'] },
     h('input', {
       type: 'checkbox', checked: t.done,
@@ -98,7 +98,7 @@ function todoList() {
 function signalBars(times) {
   const max = Math.max(1, times.green ?? 0, times.yellow ?? 0, times.red ?? 0);
   return ['green', 'yellow', 'red'].map((sig) => h('div', { class: 'bar-row' },
-    h('span', { class: 'bar-row__label' }, `${SIGNALS[sig].emoji} ${SIGNALS[sig].label.split('·')[0]}`),
+    h('span', { class: 'bar-row__label' }, SIGNALS[sig].label.split('·')[0]),
     h('div', { class: 'bar-row__track' }, h('div', { class: ['bar-row__fill', `bar-row__fill--${sig}`], style: { width: `${((times[sig] ?? 0) / max) * 100}%` } })),
     h('span', { class: 'bar-row__value' }, fmtDuration(times[sig]))));
 }
@@ -112,27 +112,27 @@ function draw() {
       h('a', { href: `app.html?project=${pid}` }, '← 프로젝트 상세'),
       h('span', { class: 'spacer' }),
       h('span', { class: 'muted small' }, state.project.name),
-      h('a', { class: 'btn btn--ghost btn--sm', href: 'index.html#/account' }, '🙋 나의 정보')),
-    h('h1', { class: 'page__title', style: { marginBottom: '16px' } }, `👤 ${state.profile.display_name}님의 작업`),
+      h('a', { class: 'btn btn--ghost btn--sm', href: 'index.html#/account' }, '나의 정보')),
+    h('h1', { class: 'page__title', style: { marginBottom: '16px' } }, `${state.profile.display_name}님의 작업`),
 
     h('div', { class: 'card', style: { marginBottom: '16px' } },
-      h('div', { class: 'card__title' }, `✅ 담당 노드 · ${done}/${state.assigned.length} 완료`),
+      h('div', { class: 'card__title' }, `담당 노드 · ${done}/${state.assigned.length} 완료`),
       state.assigned.length === 0
         ? h('p', { class: 'muted small' }, '아직 담당 노드가 없어요. 아이디어 맵에서 노드를 팀원 목록의 내 이름 위로 끌어다 놓아 보세요.')
         : kanban()),
 
     h('div', { class: 'grid grid--2' },
       h('div', { class: 'card' },
-        h('div', { class: 'card__title' }, `📝 내 할 일 · ${todoDone}/${state.todos.length}`),
+        h('div', { class: 'card__title' }, `내 할 일 · ${todoDone}/${state.todos.length}`),
         todoList()),
       h('div', { class: 'card' },
-        h('div', { class: 'card__title' }, '⏱️ 작업 상태 시간'),
+        h('div', { class: 'card__title' }, '작업 상태 시간'),
         h('div', { class: 'small muted', style: { marginBottom: '6px' } }, '오늘'),
         signalBars(state.today),
         h('div', { class: 'small muted', style: { margin: '12px 0 6px' } }, '최근 7일'),
         signalBars(state.week)),
       h('div', { class: 'card' },
-        h('div', { class: 'card__title' }, `👍 받은 좋아요 (${state.praises.length})`),
+        h('div', { class: 'card__title' }, `받은 좋아요 (${state.praises.length})`),
         state.praises.length === 0 && h('p', { class: 'muted small' }, '아직 받은 좋아요가 없어요.'),
         state.praises.slice(0, 20).map((p) => h('div', { class: 'feed-item' },
           h('div', {},
@@ -140,7 +140,7 @@ function draw() {
             p.message && h('div', {}, p.message)),
           h('span', { class: 'feed-item__time' }, relTime(p.created_at))))),
       h('div', { class: 'card' },
-        h('div', { class: 'card__title' }, '📜 내 활동 내역'),
+        h('div', { class: 'card__title' }, '내 활동 내역'),
         state.activity.length === 0 && h('p', { class: 'muted small' }, '아직 활동이 없어요.'),
         state.activity.map((a) => h('div', { class: 'feed-item' },
           h('span', {}, (ACTIONS[a.action] ?? ((m) => `${a.action} ${m.title ?? ''}`))(a.meta ?? {})),

@@ -106,7 +106,7 @@ function renderHead(s) {
       : d && h('span', { class: ['proj-bar__chip', 'dday', d.days <= 3 && 'dday--urgent'], title: p.due_date }, d.label),
     h('span', { class: 'spacer' }),
     s.pageView === 'map' && h('button', { class: 'btn btn--sm btn--ghost', onclick: () => goHome() }, '⤢ 맵 전체 보기'),
-    h('a', { class: 'btn btn--sm', href: `index.html#/settings/${p.id}`, title: '프로젝트 기본 정보 · 팀원 관리 · 초대 링크' }, '⚙️ 설정'));
+    h('a', { class: 'btn btn--sm', href: `index.html#/settings/${p.id}`, title: '프로젝트 기본 정보 · 팀원 관리 · 초대 링크' }, '설정'));
 }
 
 // 왼쪽 메뉴 (Dashboard 스타일 알약 목록) ----------------------------------------------------
@@ -148,8 +148,8 @@ function renderTeam(s) {
     h('div', { class: 'page-sec__head' },
       h('h2', { class: 'page-sec__title' }, '팀원', h('span', { class: 'side-sec__count' }, String(list.length))),
       h('span', { class: 'spacer' }),
-      list.length > 1 && h('button', { class: 'btn btn--sm', onclick: () => openPraiseModal() }, '💌 메시지와 함께 좋아요'),
-      h('button', { class: 'btn btn--sm', onclick: aiRoles }, '👥 AI 역할 분담 추천')),
+      list.length > 1 && h('button', { class: 'btn btn--sm', onclick: () => openPraiseModal() }, '메시지와 함께 좋아요'),
+      h('button', { class: 'btn btn--sm', onclick: aiRoles }, 'AI 역할 분담 추천')),
     h('div', { class: 'team-grid' },
       list.map((m) => teamCard(s, m, work.get(m.user_id) ?? { total: 0, done: 0 })),
       h('button', { class: 'team-card team-card--add', onclick: invite, title: '초대 링크 복사' },
@@ -165,7 +165,7 @@ function teamCard(s, m, w) {
     h('div', { class: 'team-card__head' },
       avatar(m, { size: 48 }),
       h('div', { class: 'grow', style: { minWidth: '0' } },
-        h('div', { class: 'team-card__name ellipsis' }, m.profile?.display_name ?? '팀원', isMe ? ' (나)' : '', m.role === 'owner' ? ' 👑' : ''),
+        h('div', { class: 'team-card__name ellipsis' }, m.profile?.display_name ?? '팀원', isMe ? ' (나)' : '', m.role === 'owner' ? ' (팀장)' : ''),
         h('div', { class: 'team-card__handle ellipsis' }, m.signal_message || (sig === 'stale' ? '자리 비움?' : SIGNALS[sig]?.label))),
       h('span', { class: 'team-card__status', title: `작업 상태: ${sig === 'stale' ? '자리 비움?' : SIGNALS[sig]?.label}` },
         h('span', { class: ['signal-light', `signal-light--${sigKey}`] }))),
@@ -177,7 +177,7 @@ function teamCard(s, m, w) {
       h('div', {}, m.profile?.major || '전공 미입력'),
       h('div', {}, m.role_label || '역할 미정', ` · 담당 ${w.total}개 · 완료 ${w.done}개`)),
     exps.length > 0 && h('div', { class: 'row row--wrap', style: { marginTop: '10px' } },
-      exps.map((ex) => h('span', { class: 'exp-chip', title: expTooltip(ex) }, `${EXP_KINDS[ex.kind]?.icon ?? '📁'} ${ex.title}`))));
+      exps.map((ex) => h('span', { class: 'exp-chip', title: expTooltip(ex) }, `${EXP_KINDS[ex.kind]?.label ?? '기타'} · ${ex.title}`))));
 }
 
 /** 다른 메뉴에서 노드를 누르면 아이디어 맵으로 돌아가 그 노드를 보여준다 (보드가 보인 뒤에 위치 계산) */
@@ -240,11 +240,11 @@ function renderTree(s) {
       onclick: () => goNode(node.id),
     },
     h('span', { class: ['tree__status', `tree__status--${node.status}`] }),
-    h('span', { class: 'tree__label' }, `${node.is_candidate ? '⭐ ' : ''}${node.title}`)));
+    h('span', { class: 'tree__label' }, `${node.is_candidate ? '[후보] ' : ''}${node.title}`)));
     for (const c of childrenOf(node.id)) walk(c, depth + 1);
   };
   if (r) walk(r, 0);
-  render(parts.tree, section('tree', '🌳 노드 트리', s.nodes.size,
+  render(parts.tree, section('tree', '노드 트리', s.nodes.size,
     h('div', { class: 'tree' }, items.length ? items : h('div', { class: 'empty' }, '노드가 없어요')), true));
 }
 
@@ -258,7 +258,7 @@ function renderDocs(s) {
   const indexOf = new Map(s.requirements.map((r, i) => [r.id, i + 1]));
 
   const docList = s.docs.map((d) => h('div', { class: 'link-item' },
-    h('span', { class: 'link-item__icon' }, d.analyzed_at ? '📄' : '⏳'),
+    h('span', { class: 'small muted' }, d.analyzed_at ? '분석 완료' : '분석 전'),
     h('a', {
       href: '#', title: d.file_name,
       onclick: (e) => { e.preventDefault(); if (d.storage_path) openDocFile(d); else toast('붙여넣은 텍스트라 원본 파일이 없어요.'); },
@@ -273,7 +273,7 @@ function renderDocs(s) {
     h('div', { class: 'req-group__title' }, REQ_CATEGORIES[cat] ?? cat),
     list.map((r) => reqRow(r, indexOf.get(r.id), s.coverage.get(r.id)))));
 
-  render(parts.docs, section('docs', '📄 과제 요구사항', s.requirements.length || null, [
+  render(parts.docs, section('docs', '과제 요구사항', s.requirements.length || null, [
     h('button', { class: 'btn btn--sm btn--block', onclick: openDocModal }, '＋ 과제 문서 올리기'),
     docList.length > 0 && h('div', { style: { marginTop: '6px' } }, docList),
     s.requirements.length === 0
@@ -334,25 +334,25 @@ function renderAI(s) {
   const withExp = [...s.members.keys()].filter((id) => (s.experiences.get(id) ?? []).length > 0).length;
   const mineEmpty = !(s.experiences.get(s.user.id) ?? []).length;
 
-  render(parts.ai, section('ai', '✨ AI 도구', null, [
+  render(parts.ai, section('ai', 'AI 도구', null, [
     h('div', { class: ['team-exp', expCount === 0 && 'team-exp--empty'] },
       h('div', { class: 'grow' },
-        h('div', { class: 'small', style: { fontWeight: '700' } }, `🙋 팀 경험 카드 ${expCount}개`),
+        h('div', { class: 'small', style: { fontWeight: '700' } }, `팀 경험 카드 ${expCount}개`),
         h('div', { class: 'small muted' }, expCount === 0
           ? 'AI가 보수적인 범위로만 제안해요'
           : `팀원 ${s.members.size}명 중 ${withExp}명 입력 · AI 구체화 근거`)),
       h('button', { class: 'btn btn--sm', onclick: () => openExperienceModal() }, mineEmpty ? '입력' : '편집')),
     h('div', { class: 'stack' },
-      h('button', { class: 'btn btn--sm btn--block', onclick: () => openGenerateModal(selected.length ? selected : s.focus) }, '💡 아이디어 생성'),
-      h('button', { class: 'btn btn--sm btn--block', disabled: reviewing, onclick: aiReview }, reviewing ? spinner() : '🔍 전체 점검 (요구사항 · 팀 역량)'),
-      h('button', { class: 'btn btn--sm btn--block', onclick: () => aiDirection(selected.length ? selected : s.focus) }, '🧭 방향 추천'),
-      h('button', { class: 'btn btn--sm btn--block', onclick: aiRoles }, '👥 역할 분담 추천'),
+      h('button', { class: 'btn btn--sm btn--block', onclick: () => openGenerateModal(selected.length ? selected : s.focus) }, '아이디어 생성'),
+      h('button', { class: 'btn btn--sm btn--block', disabled: reviewing, onclick: aiReview }, reviewing ? spinner() : '전체 점검 (요구사항 · 팀 역량)'),
+      h('button', { class: 'btn btn--sm btn--block', onclick: () => aiDirection(selected.length ? selected : s.focus) }, '방향 추천'),
+      h('button', { class: 'btn btn--sm btn--block', onclick: aiRoles }, '역할 분담 추천'),
     ),
     summary && h('div', { style: { marginTop: '10px' } },
       h('div', { class: 'small muted', style: { fontWeight: '700' } }, `최근 점검 · ${relTime(summary.created_at)}`),
       h('div', { class: 'small', style: { whiteSpace: 'pre-wrap', marginTop: '2px' } }, summary.content)),
     rootGaps.length > 0 && h('div', { style: { marginTop: '8px' } },
-      h('div', { class: 'small muted', style: { fontWeight: '700' } }, '🧩 빠진 부분'),
+      h('div', { class: 'small muted', style: { fontWeight: '700' } }, '빠진 부분'),
       rootGaps.map((g) => h('div', { class: 'row small', style: { marginTop: '4px' } },
         h('span', { class: 'grow', title: g.content }, g.content.split('\n')[0]),
         h('button', { class: 'btn btn--sm', onclick: () => addNodeFromComment(g) }, '＋')))),
@@ -364,7 +364,7 @@ function renderLinks(s) {
   const byKind = new Map(Object.keys(LINK_KINDS).map((k) => [k, []]));
   for (const l of s.links) (byKind.get(l.kind) ?? byKind.get('other')).push(l);
   const groups = [...byKind.entries()].filter(([, list]) => list.length).map(([kind, list]) => h('div', { class: 'link-group' },
-    h('div', { class: 'req-group__title' }, `${LINK_KINDS[kind].icon} ${LINK_KINDS[kind].label}`),
+    h('div', { class: 'req-group__title' }, LINK_KINDS[kind].label),
     list.map((l) => {
       const url = safeUrl(l.url);
       const node = l.node_id ? s.nodes.get(l.node_id) : null;
@@ -372,7 +372,7 @@ function renderLinks(s) {
         h('a', { href: url ?? '#', target: '_blank', rel: 'noopener noreferrer', title: node ? `${l.title} · ${node.title}` : l.title }, l.title),
         h('button', { class: 'icon-btn', title: '삭제', onclick: () => deleteLink(l.id).catch(() => {}) }, '✕'));
     })));
-  render(parts.links, section('links', '🔗 링크', s.links.length || null, [
+  render(parts.links, section('links', '링크', s.links.length || null, [
     groups.length === 0 && h('p', { class: 'small faint' }, '노션, 회의록, 피그마 링크를 한곳에 모아 두세요.'),
     groups,
     h('button', { class: 'btn btn--ghost btn--sm', onclick: () => openLinkModal(null) }, '＋ 링크 추가'),
@@ -399,7 +399,7 @@ function renderSignal(s) {
     onchange: (e) => { if ((e.target.value.trim() || null) !== (mine.signal_message || null)) change(mine.signal); },
   });
   const t = s.signalTime ?? {};
-  render(parts.signal, section('signal', `🚦 내 작업 상태 ${SIGNALS[mine.signal]?.emoji ?? ''}`, null, [
+  render(parts.signal, section('signal', `내 작업 상태 · ${SIGNALS[mine.signal]?.label ?? SIGNALS.off.label}`, null, [
     h('div', { class: 'signal-btns' },
       ['green', 'yellow', 'red'].map((sig) => h('button', {
         class: ['signal-btn', mine.signal === sig && 'signal-btn--on'],
@@ -407,9 +407,9 @@ function renderSignal(s) {
         title: mine.signal === sig ? '한 번 더 누르면 오프라인' : SIGNALS[sig].label,
       }, h('span', { class: ['signal-light', `signal-light--${sig}`] }), SIGNALS[sig].label))),
     h('div', { style: { marginTop: '6px' } }, msg),
-    mine.signal === 'red' && h('button', { class: 'btn btn--sm btn--block', style: { marginTop: '6px' }, onclick: () => openHelpModal(msg.value || mine.signal_message) }, '🤖 AI 도움 받기'),
-    h('div', { class: 'signal-time', title: '상태를 켜 둔 시간이 자동으로 측정돼요' }, h('span', {}, '⏱️ 오늘'),
-      h('span', {}, `🟢 ${fmtDuration(t.green)} · 🟡 ${fmtDuration(t.yellow)} · 🔴 ${fmtDuration(t.red)}`)),
+    mine.signal === 'red' && h('button', { class: 'btn btn--sm btn--block', style: { marginTop: '6px' }, onclick: () => openHelpModal(msg.value || mine.signal_message) }, 'AI 도움 받기'),
+    h('div', { class: 'signal-time', title: '상태를 켜 둔 시간이 자동으로 측정돼요' }, h('span', {}, '오늘'),
+      h('span', {}, `진행 중 ${fmtDuration(t.green)} · 쉬는 중 ${fmtDuration(t.yellow)} · 도움 필요 ${fmtDuration(t.red)}`)),
   ], true));
 }
 
@@ -427,7 +427,7 @@ async function sendLike(m, btn) {
   btn.disabled = true;
   try {
     await sendPraise({ projectId: project.id, toUser: m.user_id });
-    toast(`👍 ${m.profile?.display_name ?? '팀원'}님에게 좋아요를 보냈어요!`);
+    toast(`${m.profile?.display_name ?? '팀원'}님에게 좋아요를 보냈어요!`);
     refreshTemperatures(project.id);
   } catch { btn.disabled = false; }
 }
@@ -446,7 +446,7 @@ function renderMine(s) {
   const myTasks = [...s.tasks.values()].flat().filter((t) => t.assignee_id === uid && !t.done && s.nodes.has(t.node_id));
   const done = mineNodes.filter((x) => x.a.task_state === 'done').length;
 
-  render(parts.mine, section('mine', '✅ 담당 노드', mineNodes.length || null, [
+  render(parts.mine, section('mine', '담당 노드', mineNodes.length || null, [
     mineNodes.length === 0
       ? h('p', { class: 'small faint' }, '아직 담당 노드가 없어요. 노드를 오른쪽 팀원 목록의 내 이름 위로 끌어다 놓아 보세요.')
       : [

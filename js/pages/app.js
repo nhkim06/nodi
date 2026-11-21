@@ -179,7 +179,7 @@ subscribe(renderAll);
 
 function renderBreadcrumb(s) {
   const focus = s.focus.filter((id) => s.nodes.has(id));
-  const items = [h('button', { class: ['breadcrumb__item', !focus.length && 'breadcrumb__item--current'], onclick: () => goHome() }, '🏠 Home')];
+  const items = [h('button', { class: ['breadcrumb__item', !focus.length && 'breadcrumb__item--current'], onclick: () => goHome() }, 'Home')];
   if (focus.length) {
     const path = ancestorsOf(focus[0]).filter((n) => n.parent_id);   // 루트(=Home)는 제외
     for (const n of path) {
@@ -204,7 +204,7 @@ function renderToolbar(s) {
   render($('#toolbar'),
     h('div', { class: 'toolbar__group' },
       h('button', { class: 'btn btn--sm', title: '선택한 노드(없으면 루트)의 자식 추가 (Tab)', onclick: () => addChild(defaultParentId()) }, '＋ 노드'),
-      h('button', { class: 'btn btn--sm btn--primary', onclick: () => openGenerateModal(sel.length ? sel : s.focus) }, '✨ AI 생성')),
+      h('button', { class: 'btn btn--sm btn--primary', onclick: () => openGenerateModal(sel.length ? sel : s.focus) }, 'AI 생성')),
     h('span', { class: 'toolbar__sep' }),
     h('div', { class: 'toolbar__group' },
       h('button', {
@@ -222,8 +222,8 @@ function renderToolbar(s) {
       }, 'AI 말풍선 숨기기')),
     h('span', { class: 'spacer' }),
     s.focus.length > 0 && h('div', { class: 'toolbar__group' },
-      h('button', { class: 'btn btn--sm', onclick: () => aiDirection(s.focus) }, '🧭 방향 추천'),
-      h('button', { class: 'btn btn--sm', onclick: () => goHome() }, '🏠 홈으로')),
+      h('button', { class: 'btn btn--sm', onclick: () => aiDirection(s.focus) }, '방향 추천'),
+      h('button', { class: 'btn btn--sm', onclick: () => goHome() }, '홈으로')),
   );
 }
 
@@ -266,5 +266,5 @@ const myExpCount = experiences.get(session.user.id)?.length ?? 0;
 if (!myExpCount && !onboardingSkipped(session.user.id)) {
   setTimeout(() => openExperienceModal({ onboarding: true }), 400);
 } else if (!ws.reqs.length && !ws.docs.length) {
-  setTimeout(() => toast('📄 왼쪽 "아이디어 맵 › 과제 요구사항"이나 설정의 "교수 요구사항"에 과제 공지를 넣으면 AI가 요구사항을 정리해 줘요.', { duration: 5000 }), 800);
+  setTimeout(() => toast('왼쪽 "아이디어 맵 › 과제 요구사항"이나 설정의 "교수 요구사항"에 과제 공지를 넣으면 AI가 요구사항을 정리해 줘요.', { duration: 5000 }), 800);
 }

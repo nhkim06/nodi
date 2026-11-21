@@ -52,7 +52,7 @@ function renderOnboarding(projectId, user) {
   });
   const next = h('button', { class: 'btn btn--primary', onclick: () => openProject(projectId) }, '프로젝트로 이동');
   render(root, topNav({ active: 'projects', userName: user.email, onSignOut: signOut }), h('div', { class: 'page', style: { maxWidth: '720px' } },
-    h('h1', { class: 'page__title' }, '🙋 우리 팀 AI가 실행 가능한 범위를 정하려면 경험이 필요해요'),
+    h('h1', { class: 'page__title' }, '우리 팀 AI가 실행 가능한 범위를 정하려면 경험이 필요해요'),
     h('p', { class: 'muted', style: { margin: '8px 0 16px' } },
       '설문 분석을 해 봤다면 정량 설문을, 처음이면 인터뷰 5명부터. 프론트엔드 경험이 있으면 실제 동작하는 MVP를, 없으면 Figma 프로토타입까지. ',
       'AI는 팀원들의 경험을 근거로 아이디어의 조사 방법과 구현 범위를 정해요. 최소 1개 입력을 권장해요. (나중에 account 탭에서 고칠 수 있어요)'),
@@ -76,7 +76,7 @@ function renderLogin() {
       h('p', { class: 'hero__eyebrow' }, 'Make ideation easier.'),
       heroTitle(),
       h('p', { class: 'hero__sub' }, 'A space where ideas connect, evolve, and become reality.'),
-      params.get('join') && h('p', { class: 'small muted', style: { marginTop: '16px' } }, '🔑 초대 링크로 들어왔어요. 로그인하면 바로 프로젝트에 참여해요.'),
+      params.get('join') && h('p', { class: 'small muted', style: { marginTop: '16px' } }, '초대 링크로 들어왔어요. 로그인하면 바로 프로젝트에 참여해요.'),
       h('button', { class: 'btn btn--soft hero__cta', onclick: openLogin }, 'Start your NO:DI')));
   if (params.get('join') || params.get('view') === 'projects') openLogin();
 }
@@ -186,7 +186,7 @@ function projectCard(p) {
         ? h('span', { class: 'proj-card__badge proj-card__badge--muted' }, '종료')
         : d && h('span', { class: ['proj-card__badge', !past && d.days <= 3 && 'dday--urgent'] }, d.label)),
     h('div', { class: 'proj-card__body' },
-      h('div', { class: 'proj-card__name ellipsis' }, p.name, p.my_role === 'owner' ? ' 👑' : ''),
+      h('div', { class: 'proj-card__name ellipsis' }, p.name, p.my_role === 'owner' ? ' (팀장)' : ''),
       h('div', { class: 'proj-card__meta' },
         p.due_date && h('span', {}, `마감 ${fmtDate(p.due_date)}`),
         pr?.total > 0 && h('span', {}, `내 담당 ${pr.done}/${pr.total}`)),
@@ -321,11 +321,11 @@ function accountView() {
     h('h1', { class: 'page__title', style: { marginBottom: '16px' } }, '나의 정보'),
     h('div', { class: 'grid grid--account' },
       h('div', { class: 'card' },
-        h('div', { class: 'card__title' }, '🙋 프로필'),
+        h('div', { class: 'card__title' }, '프로필'),
         h('p', { class: 'small faint', style: { marginBottom: '12px' } }, '같은 프로젝트 팀원에게 보여요.'),
         form),
       h('div', { class: 'card', id: 'experiences' },
-        h('div', { class: 'card__title' }, '🧰 나의 프로젝트 경험'),
+        h('div', { class: 'card__title' }, '나의 프로젝트 경험'),
         h('p', { class: 'small faint', style: { marginBottom: '12px' } },
           'AI가 아이디어 구체화(조사 방법 · 구현 범위 · 할 일), 역할 추천, 막힘 도우미 추천에 근거로 써요. ',
           '프로젝트가 아니라 나에게 저장돼서 모든 팀플에서 그대로 쓰이고, 같은 프로젝트 팀원에게만 보여요.'),
@@ -366,7 +366,7 @@ async function settingsView(pid) {
       h('h1', { class: 'page__title grow' }, '프로젝트 설정'),
       picker,
       h('a', { class: 'btn btn--sm', href: `app.html?project=${pid}` }, '프로젝트 상세 →')),
-    !isOwner && h('p', { class: 'plan-banner', style: { marginBottom: '16px' } }, '👑 기본 정보 수정과 팀원 내보내기는 팀장만 할 수 있어요.'),
+    !isOwner && h('p', { class: 'plan-banner', style: { marginBottom: '16px' } }, '기본 정보 수정과 팀원 내보내기는 팀장만 할 수 있어요.'),
     h('div', { class: 'grid grid--2' },
       basicInfoCard(project, isOwner),
       h('div', { class: 'stack-lg' }, inviteCard(project), membersCard(project, members, isOwner))),
@@ -399,7 +399,7 @@ function basicInfoCard(p, editable) {
       save.disabled = false;
     },
   },
-  h('div', { class: 'card__title' }, '📋 프로젝트 기본 정보'),
+  h('div', { class: 'card__title' }, '프로젝트 기본 정보'),
   h('div', { class: 'field' }, h('label', {}, '프로젝트 이름'), name),
   h('div', { class: 'row' },
     h('div', { class: 'field grow' }, h('label', {}, '과목명'), course),
@@ -416,7 +416,7 @@ function requirementCard(p, reqs, isOwner) {
   });
   note.value = p.professor_note ?? '';
   const status = h('div', { class: 'small muted', style: { minHeight: '20px', marginTop: '6px' } });
-  const analyzeBtn = h('button', { class: 'btn btn--primary', type: 'button' }, '✨ 저장하고 AI로 요구사항 정리');
+  const analyzeBtn = h('button', { class: 'btn btn--primary', type: 'button' }, '저장하고 AI로 요구사항 정리');
   const saveBtn = h('button', { class: 'btn', type: 'button' }, '저장만');
 
   const saveNote = async () => {
@@ -455,7 +455,7 @@ function requirementCard(p, reqs, isOwner) {
         try { msg = (await error.context?.json?.())?.error ?? msg; } catch { /* 본문 없음 */ }
         throw Object.assign(new Error(msg), { toastMsg: msg });
       }
-      toast(`📄 요구사항 ${data.requirements?.length ?? 0}개를 정리했어요.`, { duration: 4000 });
+      toast(`요구사항 ${data.requirements?.length ?? 0}개를 정리했어요.`, { duration: 4000 });
       route();
     } catch (e) {
       if (e.toastMsg) toast(e.toastMsg, { type: 'error', duration: 4000 });
@@ -466,7 +466,7 @@ function requirementCard(p, reqs, isOwner) {
   });
 
   return h('div', { class: 'card', style: { marginTop: '16px' } },
-    h('div', { class: 'card__title' }, '🎓 교수 요구사항'),
+    h('div', { class: 'card__title' }, '교수 요구사항'),
     h('p', { class: 'small faint', style: { marginBottom: '8px' } },
       'AI가 아이디어 생성 · 피드백 · 점검 · 할 일 목록을 만들 때 기준이 돼요. PDF/DOCX 파일은 프로젝트 상세 › 아이디어 맵 › 과제 요구사항에서 올릴 수 있어요.',
       !isOwner && ' (원문 저장은 팀장만, AI 정리는 누구나 할 수 있어요)'),
@@ -485,7 +485,7 @@ function inviteCard(p) {
     try { await navigator.clipboard.writeText(text); toast(`${label} 복사했어요.`); } catch { toast(text); }
   };
   return h('div', { class: 'card' },
-    h('div', { class: 'card__title' }, '🔗 초대 링크 공유'),
+    h('div', { class: 'card__title' }, '초대 링크 공유'),
     h('p', { class: 'small faint', style: { marginBottom: '8px' } }, '링크를 받은 팀원은 로그인만 하면 바로 프로젝트에 참여해요.'),
     h('div', { class: 'row' },
       h('input', { class: 'input grow', value: url, readonly: true, 'aria-label': '초대 링크', onfocus: (e) => e.target.select() }),
@@ -497,14 +497,14 @@ function inviteCard(p) {
 
 function membersCard(p, members, isOwner) {
   return h('div', { class: 'card' },
-    h('div', { class: 'card__title' }, `👥 팀원 관리 (${members.length})`),
+    h('div', { class: 'card__title' }, `팀원 관리 (${members.length})`),
     members.map((m) => {
       const isMe = m.user_id === ctx.user.id;
       const editable = isMe || isOwner;
       return h('div', { class: 'member-row' },
         avatar(m),
         h('div', { class: 'grow', style: { minWidth: '0' } },
-          h('div', { class: 'ellipsis', style: { fontWeight: '700' } }, m.profile?.display_name ?? '팀원', isMe ? ' (나)' : '', m.role === 'owner' ? ' 👑' : ''),
+          h('div', { class: 'ellipsis', style: { fontWeight: '700' } }, m.profile?.display_name ?? '팀원', isMe ? ' (나)' : '', m.role === 'owner' ? ' (팀장)' : ''),
           h('input', {
             class: 'input input--sm', maxlength: '20', placeholder: '역할 (예: 기획, 디자인, 발표)', value: m.role_label ?? '', disabled: !editable,
             onkeydown: (e) => { if (e.key === 'Enter' && !e.isComposing) e.target.blur(); },
@@ -529,7 +529,7 @@ function membersCard(p, members, isOwner) {
 function dangerCard(p) {
   const done = !!p.completed_at;
   return h('div', { class: 'card', style: { marginTop: '16px' } },
-    h('div', { class: 'card__title' }, '🗂️ 프로젝트 종료'),
+    h('div', { class: 'card__title' }, '프로젝트 종료'),
     h('div', { class: 'row' },
       h('p', { class: 'small muted grow' }, done
         ? `${fmtDate(p.completed_at)}에 종료한 프로젝트예요. HOME의 '지난 프로젝트'에 보여요.`
@@ -539,7 +539,7 @@ function dangerCard(p) {
           try {
             await updateProject(p.id, { completed_at: done ? null : new Date().toISOString() });
             await reloadProjects();
-            toast(done ? '다시 진행 중으로 바꿨어요.' : '프로젝트를 종료했어요. 수고했어요! 🎉');
+            toast(done ? '다시 진행 중으로 바꿨어요.' : '프로젝트를 종료했어요. 수고했어요!');
             route();
           } catch { /* 토스트 처리됨 */ }
         },

@@ -91,7 +91,7 @@ export function subscribeProject(pid) {
       if (data) {
         mutate('members', (m) => m.set(row.user_id, { ...data, temperature: 36.5, praise_count: 0 }));
         listExperiences([row.user_id]).then((rows) => mutate('experiences', (m) => m.set(row.user_id, rows))).catch(() => {});
-        toast(`${data.profile?.display_name ?? '새 팀원'}님이 참여했어요 👋`);
+        toast(`${data.profile?.display_name ?? '새 팀원'}님이 참여했어요`);
       }
     }
   });
@@ -102,7 +102,7 @@ export function subscribeProject(pid) {
     const { user, members } = getState();
     if (row.to_user === user?.id) {
       const from = members.get(row.from_user)?.profile?.display_name ?? '팀원';
-      toast(row.message ? `👍 ${from}님의 좋아요: ${row.message}` : `👍 ${from}님이 좋아요를 보냈어요!`, { duration: 5000 });
+      toast(row.message ? `${from}님의 좋아요: ${row.message}` : `${from}님이 좋아요를 보냈어요!`, { duration: 5000 });
     }
   });
 
@@ -112,7 +112,7 @@ export function subscribeProject(pid) {
     if (payload?.to !== user?.id) return;
     mutate('helpRequests', (s) => s.add(payload.from));
     const from = members.get(payload.from)?.profile?.display_name ?? '팀원';
-    toast(`🔴 ${from}님이 도움을 요청했어요: ${payload.message ?? ''}`, { duration: 8000 });
+    toast(`${from}님이 도움을 요청했어요: ${payload.message ?? ''}`, { duration: 8000 });
   });
 
   ch.subscribe((status) => {

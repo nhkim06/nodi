@@ -131,7 +131,7 @@ function startDrag(e, id, viewport) {
     if (inPanel) {
       if (!ghost) {
         const title = ids.length > 1 ? `노드 ${ids.length}개` : getState().nodes.get(id)?.title;
-        ghost = h('div', { class: 'drag-ghost' }, `👤 ${title}`);
+        ghost = h('div', { class: 'drag-ghost' }, title);
         document.body.append(ghost);
         markDropOut(ids, true);
       }
