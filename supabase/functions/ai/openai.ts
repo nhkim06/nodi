@@ -91,7 +91,13 @@ export async function callJSON<T>(o: CallOptions): Promise<{ data: T; usage: Usa
       }
 
       if (res.status === 429 || res.status >= 500) {
-        console.warn(`openai ${res.status} on ${model}`, await res.text());
+        const detail = await res.text();
+        console.warn(`openai ${res.status} on ${model}`, detail);
+        // 크레딧 소진(insufficient_quota)은 계정 단위라 대체 모델·재시도 모두 소용없다 → 바로 알린다
+        if (res.status === 429 && /insufficient_quota|credit_balance_exhausted/.test(detail)) {
+          throw new AppError(`OpenAI insufficient_quota: ${detail.slice(0, 300)}`, 503,
+            'AI 크레딧이 모두 소진됐어요. 관리자가 OpenAI 결제(크레딧)를 충전해야 해요.');
+        }
         // 429(한도 초과)는 같은 모델로 재시도해도 소용없는 경우가 많으니 바로 대체 모델로
         if (res.status === 429) break;
         await sleep(1500);
