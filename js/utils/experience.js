@@ -5,8 +5,8 @@ import { h } from './dom.js';
 
 export const EXP_KINDS = {
   project: { label: '프로젝트' },
-  research: { label: '조사·리서치' },
-  tool: { label: '도구·기술' },
+  research: { label: '리서치' },
+  tool: { label: '기술' },
   domain: { label: '도메인 지식' },
   role: { label: '역할' },
 };
