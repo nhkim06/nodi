@@ -12,9 +12,21 @@ let spaceDown = false;
 export const isSpaceDown = () => spaceDown;
 export const viewportEl = () => vp;
 
-export function initViewport(viewportEl, worldEl, { onBlankClick, onMarquee } = {}) {
+export function initViewport(viewportEl, worldEl, { onBlankClick, onMarquee, onRightSelect } = {}) {
   vp = viewportEl;
   world = worldEl;
+
+  // 우클릭 드래그 = 범위 선택(새로 선택) / 우클릭 = 그 노드 메뉴. 브라우저 기본 메뉴는 끈다
+  vp.addEventListener('contextmenu', (e) => {
+    if (!e.target.closest('input, textarea')) e.preventDefault();
+  });
+  vp.addEventListener('pointerdown', (e) => {
+    if (e.button !== 2 || e.target.closest('input, textarea, .bubble-stack, .zoom')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const nodeId = e.target.closest('.node')?.dataset.id ?? null;
+    startMarquee(e, (box, moved, end) => onRightSelect?.({ box: moved ? box : null, nodeId, ...end, additive: e.shiftKey }));
+  });
 
   // 휠: Ctrl/⌘ = 줌, 그 외 = 이동
   vp.addEventListener('wheel', (e) => {
@@ -90,14 +102,16 @@ function startMarquee(e, onMarquee) {
     });
   };
   const move = (ev) => { cur = { x: ev.clientX - rect.left, y: ev.clientY - rect.top }; draw(); };
-  const up = () => {
+  const up = (ev) => {
     vp.removeEventListener('pointermove', move);
     vp.removeEventListener('pointerup', up);
     vp.removeEventListener('pointercancel', up);
     box.remove();
+    if (ev.type === 'pointercancel') return;
     const a = screenToWorld(rect.left + Math.min(sx, cur.x), rect.top + Math.min(sy, cur.y));
     const b = screenToWorld(rect.left + Math.max(sx, cur.x), rect.top + Math.max(sy, cur.y));
-    onMarquee?.({ minX: a.x, minY: a.y, maxX: b.x, maxY: b.y });
+    const moved = Math.abs(cur.x - sx) + Math.abs(cur.y - sy) > 4;
+    onMarquee?.({ minX: a.x, minY: a.y, maxX: b.x, maxY: b.y }, moved, { clientX: ev.clientX, clientY: ev.clientY });
   };
   draw();
   vp.addEventListener('pointermove', move);

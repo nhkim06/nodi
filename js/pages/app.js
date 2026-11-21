@@ -12,7 +12,7 @@ import { initViewport, applyView, fitTo, zoomBy, resetZoom } from '../canvas/vie
 import { initNodes, renderNodes } from '../canvas/renderNodes.js';
 import { initEdges, renderEdges } from '../canvas/renderEdges.js';
 import { initBubbles, renderBubbles } from '../canvas/bubbles.js';
-import { initInteractions, selectInBox, blankClick } from '../canvas/interactions.js';
+import { initInteractions, selectInBox, blankClick, rightSelect } from '../canvas/interactions.js';
 import { visibleNodeIds } from '../canvas/layout.js';
 import { initSidebar, layoutSidebar, renderSidebar, refreshSignalTime, tickSignalTime, VIEWS } from '../panels/sidebar.js';
 import { topNav } from '../panels/topnav.js';
@@ -98,7 +98,7 @@ setState({
 
 // 3) 화면 초기화 --------------------------------------------------------------------
 const viewport = $('#viewport');
-initViewport(viewport, $('#world'), { onBlankClick: blankClick, onMarquee: selectInBox });
+initViewport(viewport, $('#world'), { onBlankClick: blankClick, onMarquee: selectInBox, onRightSelect: rightSelect });
 initNodes($('#nodes'));
 initEdges($('#edges'));
 initBubbles($('#bubbles'));
