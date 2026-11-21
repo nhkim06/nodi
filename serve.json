@@ -2,6 +2,8 @@
   "cleanUrls": ["/"],
   "directoryListing": false,
   "rewrites": [
-    { "source": "/.env", "destination": "/index.html" }
+    { "source": "/.env", "destination": "/index.html" },
+    { "source": "/app", "destination": "/app.html" },
+    { "source": "/me", "destination": "/me.html" }
   ]
 }

@@ -17,8 +17,10 @@ import { q } from '../api/client.js';
 import { experienceEditor, skipOnboarding, onboardingSkipped } from '../panels/experiences.js';
 import { topNav } from '../panels/topnav.js';
 import { openModal } from '../panels/modals.js';
+import { rememberProject, rememberProjectLinks } from '../utils/project.js';
 
 const root = $('#root');
+rememberProjectLinks();
 const params = new URLSearchParams(location.search);
 
 const TABS = [
@@ -35,7 +37,7 @@ function nextUrl() {
   return null;
 }
 
-const openProject = (id) => { location.href = `app.html?project=${id}`; };
+const openProject = (id) => { rememberProject(id); location.href = `app.html?project=${id}`; };
 
 /** 프로젝트에 들어가기 전, 내 경험 카드가 0개면 경험 온보딩 단계를 먼저 보여준다 (F16) */
 async function goProject(id, user) {

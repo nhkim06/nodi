@@ -12,11 +12,13 @@ import { listMyTasks, updateTask } from '../api/tasks.js';
 import { signalTime } from '../api/signals.js';
 import { listReceived } from '../api/praises.js';
 import { q } from '../api/client.js';
+import { currentProjectId, rememberProjectLinks } from '../utils/project.js';
 
 const root = $('#root');
 const session = await requireAuth();
 const uid = session.user.id;
-const pid = new URLSearchParams(location.search).get('project');
+const pid = currentProjectId();
+rememberProjectLinks();
 if (!pid) location.replace('index.html#/projects');
 
 const state = {
