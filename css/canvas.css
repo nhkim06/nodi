@@ -84,6 +84,21 @@
 /* 선택 사각형 */
 .marquee { position: absolute; border: 1px dashed var(--primary); background: var(--primary-soft); opacity: .6; pointer-events: none; }
 
+/* 우클릭 메뉴 */
+.ctx-menu {
+  position: fixed; z-index: 1000; min-width: 150px; padding: 4px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+}
+.ctx-menu__label { padding: 4px 8px; font-size: 12px; color: var(--text-muted); }
+.ctx-menu__item {
+  display: block; width: 100%; padding: 6px 8px; text-align: left;
+  border: 0; border-radius: var(--radius-sm); background: none; font: inherit; font-size: 13px; cursor: pointer;
+}
+.ctx-menu__item:hover, .ctx-menu__item:focus-visible { background: var(--surface-2); outline: none; }
+.ctx-menu__item--danger { color: var(--danger); }
+.ctx-menu__item--danger:hover { background: var(--danger-soft); }
+
 /* 줌 컨트롤 */
 .zoom {
   position: absolute; right: var(--sp-3); bottom: var(--sp-3);

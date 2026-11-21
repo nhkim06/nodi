@@ -10,3 +10,6 @@ supabase/.branches/
 node_modules/
 .DS_Store
 Thumbs.db
+
+# 배포 빌드 결과물
+dist/

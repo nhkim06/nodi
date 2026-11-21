@@ -81,8 +81,7 @@ export function initInteractions({ viewport, nodesLayer }) {
   });
 }
 
-/** Shift+드래그 범위 선택 결과 */
-export function selectInBox(box) {
+function idsInBox(box) {
   const { nodes } = getState();
   const ids = [];
   for (const id of visibleNodeIds()) {
@@ -90,7 +89,68 @@ export function selectInBox(box) {
     const { w, h: ht } = nodeSize(id);
     if (n.x < box.maxX && n.x + w > box.minX && n.y < box.maxY && n.y + ht > box.minY) ids.push(id);
   }
+  return ids;
+}
+
+/** Shift+드래그 범위 선택 결과 */
+export function selectInBox(box) {
+  const ids = idsInBox(box);
   mutate('selection', (s) => ids.forEach((id) => s.add(id)));
+}
+
+/**
+ * 우클릭: 드래그했으면 범위 안 노드를 선택(Shift 면 추가), 그냥 클릭이면 그 노드를 선택.
+ * 선택된 노드가 있으면 그 자리에 삭제 메뉴를 띄운다.
+ */
+export function rightSelect({ box, nodeId, clientX, clientY, additive }) {
+  closeContextMenu();
+  if (box) {
+    const ids = idsInBox(box);
+    if (additive) mutate('selection', (s) => ids.forEach((id) => s.add(id)));
+    else setState({ selection: new Set(ids) });
+  } else if (nodeId) {
+    if (!getState().selection.has(nodeId)) selectOnly(nodeId);
+  } else {
+    return;
+  }
+  const sel = [...getState().selection].filter((id) => getState().nodes.has(id));
+  if (!sel.length) return;
+  openContextMenu(clientX, clientY, sel);
+}
+
+let ctxMenu = null;
+function closeContextMenu() {
+  if (!ctxMenu) return;
+  ctxMenu.cleanup();
+  ctxMenu = null;
+}
+
+function openContextMenu(x, y, ids) {
+  const el = h('div', { class: 'ctx-menu', role: 'menu' },
+    h('div', { class: 'ctx-menu__label' }, `노드 ${ids.length}개 선택됨`),
+    h('button', {
+      class: 'ctx-menu__item ctx-menu__item--danger', role: 'menuitem',
+      onclick: () => { closeContextMenu(); deleteWithConfirm(ids); },
+    }, `🗑 ${ids.length > 1 ? `${ids.length}개 ` : ''}삭제`));
+  document.body.append(el);
+  // 화면 밖으로 나가지 않게
+  const r = el.getBoundingClientRect();
+  el.style.left = `${Math.min(x, window.innerWidth - r.width - 8)}px`;
+  el.style.top = `${Math.min(y, window.innerHeight - r.height - 8)}px`;
+
+  const onDown = (e) => { if (!el.contains(e.target)) closeContextMenu(); };
+  const onKey = (e) => { if (e.key === 'Escape') { e.stopPropagation(); closeContextMenu(); } };
+  setTimeout(() => {
+    window.addEventListener('pointerdown', onDown, true);
+    window.addEventListener('keydown', onKey, true);
+  }, 0);
+  ctxMenu = {
+    cleanup: () => {
+      el.remove();
+      window.removeEventListener('pointerdown', onDown, true);
+      window.removeEventListener('keydown', onKey, true);
+    },
+  };
 }
 
 function startDrag(e, id, viewport) {
