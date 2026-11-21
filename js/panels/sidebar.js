@@ -4,7 +4,7 @@ import { icon } from '../utils/icons.js';
 //   부품: 노드 트리 · AI 도구 · 과제 요구사항 · 내 작업 상태 · 팀원 카드 · 링크 · 나의 작업
 //   메뉴마다 부품을 왼쪽 보조 패널(접히는 카드) 또는 메인 보드(펼친 섹션)에 배치한다 → LAYOUT
 import { h, render, toast, safeUrl, spinner } from '../utils/dom.js';
-import { dday, relTime } from '../utils/time.js';
+import { dday, relTime, todayKST } from '../utils/time.js';
 import { LINK_KINDS, REQ_CATEGORIES, IMPORTANCE, SIGNALS, TASK_STATES, avatar, effectiveSignal } from '../utils/color.js';
 import { EXP_KINDS, sortExperiences, expTooltip } from '../utils/experience.js';
 import { sendPraise } from '../api/praises.js';
@@ -390,16 +390,44 @@ function renderSignal(s) {
       }, h('span', { class: ['signal-light', `signal-light--${sig}`] }), SIGNALS[sig].label))),
     h('div', { style: { marginTop: '6px' } }, msg),
     mine.signal === 'red' && h('button', { class: 'btn btn--sm btn--block', style: { marginTop: '6px' }, onclick: () => openHelpModal(msg.value || mine.signal_message) }, icon('sparkles'), 'AI 도움 받기'),
-    h('div', { class: 'signal-time', title: '오늘 진행 중으로 설정해 둔 누적 시간' }, icon('clock'), `진행 중 ${activeMinutes}분`),
+    h('div', { class: 'signal-time', title: '오늘 진행 중으로 설정해 둔 누적 시간' }, icon('clock'), h('span', { dataset: { activeWorkTime: '' } }, activeWorkTime(s, mine))),
   ], true));
 }
+
+function activeWorkTime({ signalTime }, member) {
+  const now = Date.now();
+  const startedAt = Date.parse(member?.signal_changed_at);
+  const midnight = Date.parse(todayKST() + 'T00:00:00+09:00');
+  const sampledAt = signalTime.sampledAt ?? 0;
+  const saved = sampledAt >= midnight ? signalTime.green ?? 0 : 0;
+  const active = member?.signal === 'green';
+  const until = active ? now : startedAt;
+  const since = Math.max(sampledAt, active ? startedAt : midnight, midnight);
+  const extra = (active || signalTime.wasActive) && Number.isFinite(until - since)
+    ? Math.max(0, Math.floor((until - since) / 1000))
+    : 0;
+  const total = saved + extra;
+  return '진행 중 ' + String(Math.floor(total / 60)).padStart(2, '0') + ':' + String(total % 60).padStart(2, '0');
+}
+
+export function tickSignalTime() {
+  const label = parts.signal?.querySelector('[data-active-work-time]');
+  if (label) label.textContent = activeWorkTime(getState(), me());
+}
+
+let signalTimeRequest = 0;
 
 /** 오늘 내 신호등 누적 시간 다시 읽기 */
 export async function refreshSignalTime() {
   const { project, user } = getState();
   if (!project || !user) return;
   try {
-    setState({ signalTime: await signalTime(project.id, user.id) });
+    const request = ++signalTimeRequest;
+    const member = me();
+    const totals = await signalTime(project.id, user.id);
+    if (request === signalTimeRequest && member?.signal === me()?.signal && member?.signal_changed_at === me()?.signal_changed_at) {
+      setState({ signalTime: { ...totals, sampledAt: Date.now(), wasActive: member?.signal === 'green' } });
+    }
   } catch { /* 조용히 무시 */ }
 }
 

@@ -14,7 +14,7 @@ import { initEdges, renderEdges } from '../canvas/renderEdges.js';
 import { initBubbles, renderBubbles } from '../canvas/bubbles.js';
 import { initInteractions, selectInBox, blankClick } from '../canvas/interactions.js';
 import { visibleNodeIds } from '../canvas/layout.js';
-import { initSidebar, layoutSidebar, renderSidebar, refreshSignalTime, VIEWS } from '../panels/sidebar.js';
+import { initSidebar, layoutSidebar, renderSidebar, refreshSignalTime, tickSignalTime, VIEWS } from '../panels/sidebar.js';
 import { topNav } from '../panels/topnav.js';
 import { renderInspector } from '../panels/inspector.js';
 import { renderMembers } from '../panels/members.js';
@@ -150,13 +150,16 @@ function renderAll(s, keys) {
 
   if (has('view')) { applyView(s.view); renderZoom(s); }
 
-  const visible = visibleNodeIds(s);
-  if (has('nodes', 'assignees', 'members', 'selection', 'filters', 'focus', 'aiBusy', 'aiComments', 'plans')) {
-    renderNodes(s, visible);
-    renderEdges(s, visible);
-  }
-  if (has('nodes', 'aiComments', 'filters', 'focus', 'requirements', 'expandedBubbles', 'selection', 'experiences', 'members')) {
-    renderBubbles(s, visible);
+  if (s.pageView === 'map') {
+    // Hidden boards report zero node dimensions.
+    const visible = visibleNodeIds(s);
+    if (has('nodes', 'assignees', 'members', 'selection', 'filters', 'focus', 'aiBusy', 'aiComments', 'plans')) {
+      renderNodes(s, visible);
+      renderEdges(s, visible);
+    }
+    if (has('nodes', 'aiComments', 'filters', 'focus', 'requirements', 'expandedBubbles', 'selection', 'experiences', 'members')) {
+      renderBubbles(s, visible);
+    }
   }
 
   renderSidebar(s, keys);
@@ -253,6 +256,7 @@ startRouter(() => {
 subscribeProject(pid);
 refreshSignalTime();
 setInterval(refreshSignalTime, 15_000);
+setInterval(tickSignalTime, 1_000);
 // 오래된 green 보정 표시를 위해 주기적으로 팀원 패널 갱신
 setInterval(() => setState({ members: getState().members }), 5 * 60_000);
 
