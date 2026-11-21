@@ -113,6 +113,7 @@ AI는 모든 판단을 두 축으로 한다.
 
 - 한도는 프로젝트별이 아니라 **API 키(조직) 전체에 걸린다.** 여러 팀이 같이 쓰면 대형 그룹 25만 토큰은 금방 소진되므로, `ai_requests`에서 오늘 HEAVY 사용량을 합산해 `AI_HEAVY_DAILY_LIMIT`을 넘으면 `OPENAI_MODEL_FALLBACK`(또는 mini)로 자동 전환한다.
 - OpenAI가 429(한도 초과)를 돌려줘도 같은 방식으로 mini 그룹 모델로 한 번 재시도한다.
+- 단, 429 본문이 `insufficient_quota`(`credit_balance_exhausted`, 크레딧 소진)이면 조직 전체가 막힌 것이라 재시도·대체 모델 없이 바로 503 + "AI 크레딧이 모두 소진됐어요" 메시지를 돌려준다(`ai_requests.error`에 `OpenAI insufficient_quota` 기록). 해결은 OpenAI Billing 충전뿐이다.
 
 ### 2.4 GPT-5 계열 호출 시 주의
 - GPT-5 계열은 reasoning 모델이라 **`temperature`를 기본값 외로 지정할 수 없다.** 대신 `reasoning_effort`로 조절한다. 아래 기능별 "temperature" 값은 `gpt-4o-mini` 같은 비-reasoning 대체 모델에만 적용한다.
