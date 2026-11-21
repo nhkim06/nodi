@@ -71,14 +71,14 @@ function heroTitle() {
 function renderLogin() {
   document.title = 'NO:DI — Make ideation easier';
   render(root,
-    topNav({ active: null, onSignIn: openLogin, onSignUp: openLogin }),
+    topNav({ active: null, onSignIn: openLogin, onSignUp: openLogin, links: { projects: 'index.html?view=projects' } }),
     h('main', { class: 'hero' },
       h('p', { class: 'hero__eyebrow' }, 'Make ideation easier.'),
       heroTitle(),
       h('p', { class: 'hero__sub' }, 'A space where ideas connect, evolve, and become reality.'),
       params.get('join') && h('p', { class: 'small muted', style: { marginTop: '16px' } }, '🔑 초대 링크로 들어왔어요. 로그인하면 바로 프로젝트에 참여해요.'),
       h('button', { class: 'btn btn--soft hero__cta', onclick: openLogin }, 'Start your NO:DI')));
-  if (params.get('join')) openLogin();
+  if (params.get('join') || params.get('view') === 'projects') openLogin();
 }
 
 /** 로그인 / 가입 모달 (이메일 매직링크 · Google) — 처음 로그인하면 계정이 만들어진다 */
@@ -574,6 +574,7 @@ async function start() {
     } catch { /* 토스트 처리됨 */ }
   }
 
+  if (params.get('view') === 'projects') history.replaceState(null, '', location.pathname + '#/projects');
   if (!location.hash) history.replaceState(null, '', '#/home');
   window.addEventListener('hashchange', route);
   route();
