@@ -1,6 +1,6 @@
 // 배포용 빌드: js/config.js 생성 → 공개할 파일만 dist/ 로 복사
 // (Vercel 이 vercel.json 의 buildCommand 로 실행. 로컬에서도 `node scripts/build.mjs` 로 확인 가능)
-import { cpSync, rmSync, mkdirSync, existsSync } from 'node:fs';
+import { cpSync, rmSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -11,7 +11,12 @@ const dist = join(root, 'dist');
 await import('./gen-config.mjs');
 
 // 2) 브라우저가 쓰는 파일만 복사 (md, scripts, supabase 등은 배포하지 않음)
-const PUBLIC = ['index.html', 'app.html', 'me.html', 'favicon.svg', 'css', 'js'];
+// 루트의 html·이미지 파일은 자동으로 포함 (logo.svg 처럼 새로 추가돼도 빠지지 않게)
+const ROOT_FILE = /\.(html|svg|png|jpe?g|webp|gif|ico|webmanifest)$/i;
+const PUBLIC = [
+  ...readdirSync(root, { withFileTypes: true }).filter((d) => d.isFile() && ROOT_FILE.test(d.name)).map((d) => d.name),
+  'css', 'js',
+];
 
 rmSync(dist, { recursive: true, force: true });
 mkdirSync(dist);
