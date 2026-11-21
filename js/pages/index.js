@@ -362,10 +362,10 @@ async function settingsView(pid) {
   }, ctx.projects.map((p) => h('option', { value: p.id }, `${p.name}${isPastProject(p) ? ' (지난 프로젝트)' : ''}`)));
 
   return [
+    h('h1', { class: 'page__title', style: { marginBottom: '12px' } }, '프로젝트 설정'),
     h('div', { class: 'row', style: { marginBottom: '16px' } },
-      h('h1', { class: 'page__title grow' }, '프로젝트 설정'),
-      picker,
-      h('a', { class: 'btn btn--sm', href: `app.html?project=${pid}` }, '프로젝트 상세 →')),
+      h('div', { class: 'grow', style: { minWidth: '0' } }, picker),
+      h('a', { class: 'btn btn--sm', href: `app.html?project=${pid}`, style: { flexShrink: '0', whiteSpace: 'nowrap' } }, '프로젝트 상세 →')),
     !isOwner && h('p', { class: 'plan-banner', style: { marginBottom: '16px' } }, '👑 기본 정보 수정과 팀원 내보내기는 팀장만 할 수 있어요.'),
     h('div', { class: 'grid grid--2' },
       basicInfoCard(project, isOwner),
