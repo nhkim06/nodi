@@ -40,9 +40,43 @@ export function revealNode(id) {
   show();
 }
 
+// 되돌리기 (Ctrl+Z) — 이번 세션에서 만든 노드 생성을 취소 ----------------------------------
+const undoStack = [];
+const UNDO_LIMIT = 50;
+
+function pushCreated(ids) {
+  if (!ids?.length) return;
+  undoStack.push(ids);
+  if (undoStack.length > UNDO_LIMIT) undoStack.shift();
+}
+
+/** 가장 최근에 만든 노드(들)를 지운다. 이미 지워진 기록은 건너뜀 */
+export async function undoLastCreate() {
+  const { nodes } = getState();
+  let ids = [];
+  while (undoStack.length && !ids.length) {
+    ids = undoStack.pop().filter((id) => nodes.has(id));
+  }
+  if (!ids.length) { toast('되돌릴 작업이 없어요.'); return; }
+  // 조상이 같이 지워지는 노드는 따로 지울 필요 없음
+  const topLevel = ids.filter((id) => {
+    let cur = nodes.get(id);
+    while (cur?.parent_id) {
+      if (ids.includes(cur.parent_id)) return false;
+      cur = nodes.get(cur.parent_id);
+    }
+    return true;
+  });
+  for (const id of topLevel) {
+    try { await nodesApi.deleteNode(id); } catch { /* 토스트 처리됨 */ }
+  }
+  toast(ids.length > 1 ? `노드 ${ids.length}개 추가를 되돌렸어요.` : '노드 추가를 되돌렸어요.');
+}
+
 // 노드 생성 / 편집 ------------------------------------------------------------------
 async function createAndEdit(parentId, pos) {
   const node = await nodesApi.createNode({ parent_id: parentId, title: '새 아이디어', x: pos.x, y: pos.y });
+  pushCreated([node.id]);
   selectOnly(node.id);
   // 렌더된 다음 프레임에 편집 시작
   requestAnimationFrame(() => requestAnimationFrame(() => renameInteractive(node.id)));
@@ -77,6 +111,19 @@ export function renameInteractive(id) {
     const node = getState().nodes.get(id);
     if (!title || !node || title === node.title) return;
     try { await nodesApi.updateNode(id, { title }); } catch { /* 토스트 처리됨 */ }
+  }, {
+    // 방금 만든 노드를 편집 중일 때만 Ctrl+Z 로 생성 취소 (기존 노드 이름 바꾸는 중엔 엉뚱한 노드가 지워지지 않게)
+    onUndo: undoStack.at(-1)?.includes(id) ? () => undoLastCreate() : undefined,
+    onDelete: () => {
+      const node = getState().nodes.get(id);
+      if (!node?.parent_id) return;
+      // 하위 노드가 없으면 확인 없이 바로 삭제 (방금 만든 노드를 지우는 흐름)
+      if (!descendantIds(id).length) {
+        nodesApi.deleteNode(id).catch(() => {});
+        return;
+      }
+      deleteWithConfirm([id]);
+    },
   });
 }
 
@@ -146,6 +193,7 @@ export async function aiGenerate(parentIds, { count = 5, hint = '' } = {}) {
     for (const n of res.nodes ?? []) nodesApi.upsertNodeLocal(n);
     for (const p of res.plans ?? []) upsertPlanLocal(p, true);
     if (!res.nodeIds?.length) return toast('새 아이디어를 만들지 못했어요. 다른 요청으로 다시 시도해 보세요.');
+    pushCreated(res.nodeIds);
     toast(`✨ 아이디어 ${res.nodeIds.length}개를 추가했어요.`);
     requestAnimationFrame(() => requestAnimationFrame(() => {
       flashNodes(res.nodeIds);
@@ -262,6 +310,7 @@ export async function addNodeFromComment(c) {
       description: c.content.split('\n').slice(1).join('\n').trim().slice(0, 2000) || null,
       ...pos,
     });
+    pushCreated([node.id]);
     dismissComment(c.id);
     selectOnly(node.id);
     requestAnimationFrame(() => requestAnimationFrame(() => flashNodes([node.id])));

@@ -128,8 +128,9 @@ export function flashNodes(ids) {
 
 /**
  * 제목 인라인 편집. onDone(newTitle | null) — null = 취소
+ * onUndo: 글자를 안 고친 상태에서 Ctrl+Z / onDelete: 빈 칸에서 Delete·Backspace
  */
-export function startEditing(id, onDone) {
+export function startEditing(id, onDone, { onUndo, onDelete } = {}) {
   const el = els.get(id);
   const node = getState().nodes.get(id);
   if (!el || !node) return false;
@@ -148,6 +149,13 @@ export function startEditing(id, onDone) {
   input.addEventListener('dblclick', stop);
   input.addEventListener('keydown', (e) => {
     e.stopPropagation();
+    const undoKey = (e.key === 'z' || e.key === 'Z') && (e.ctrlKey || e.metaKey) && !e.shiftKey;
+    if (!e.isComposing && undoKey && onUndo && input.value === node.title) {
+      e.preventDefault(); finishEditing(false); onUndo(); return;
+    }
+    if (!e.isComposing && (e.key === 'Delete' || e.key === 'Backspace') && onDelete && input.value === '') {
+      e.preventDefault(); finishEditing(false); onDelete(); return;
+    }
     if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); finishEditing(true); }
     if (e.key === 'Escape') { e.preventDefault(); finishEditing(false); }
     if (e.key === 'Tab') { e.preventDefault(); finishEditing(true); }

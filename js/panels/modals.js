@@ -45,15 +45,24 @@ export function openModal({ title, body, footer = [], wide = false, onClose }) {
 export function confirmModal(message, { okText = '확인', danger = false } = {}) {
   return new Promise((resolve) => {
     let result = false;
+    const cancelBtn = h('button', { class: 'btn', onclick: () => m.close() }, '취소');
+    const okBtn = h('button', { class: ['btn', danger ? 'btn--danger' : 'btn--primary'], onclick: () => { result = true; m.close(); } }, okText);
+    // Enter = 확인 (취소 버튼에 포커스가 있으면 취소)
+    const onEnter = (e) => {
+      if (e.key !== 'Enter' || e.isComposing) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (document.activeElement === cancelBtn) m.close();
+      else okBtn.click();
+    };
     const m = openModal({
       title: '확인',
       body: h('p', { style: { whiteSpace: 'pre-wrap' } }, message),
-      footer: [
-        h('button', { class: 'btn', onclick: () => m.close() }, '취소'),
-        h('button', { class: ['btn', danger ? 'btn--danger' : 'btn--primary'], onclick: () => { result = true; m.close(); } }, okText),
-      ],
-      onClose: () => resolve(result),
+      footer: [cancelBtn, okBtn],
+      onClose: () => { window.removeEventListener('keydown', onEnter, true); resolve(result); },
     });
+    window.addEventListener('keydown', onEnter, true);
+    setTimeout(() => okBtn.focus(), 0);
   });
 }
 

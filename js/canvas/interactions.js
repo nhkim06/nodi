@@ -7,7 +7,7 @@ import { markDropOut, isEditing } from './renderNodes.js';
 import { visibleNodeIds, nodeSize } from './layout.js';
 import {
   selectOnly, toggleSelect, clearSelection, addChild, addSibling, createAt, defaultParentId,
-  renameInteractive, deleteWithConfirm, assign,
+  renameInteractive, deleteWithConfirm, assign, undoLastCreate,
 } from '../actions.js';
 
 const DRAG_THRESHOLD = 4;
@@ -70,6 +70,10 @@ export function initInteractions({ viewport, nodesLayer }) {
     else if (e.key === 'F2' && single) { e.preventDefault(); renameInteractive(single); }
     else if ((e.key === 'Delete' || e.key === 'Backspace') && sel.length) { e.preventDefault(); deleteWithConfirm(sel); }
     else if (e.key === 'Escape') clearSelection();
+    else if ((e.key === 'z' || e.key === 'Z') && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
+      e.preventDefault();
+      undoLastCreate();
+    }
     else if ((e.key === 'a' || e.key === 'A') && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       setState({ selection: new Set(visibleNodeIds()) });
