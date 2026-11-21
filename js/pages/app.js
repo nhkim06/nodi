@@ -19,6 +19,7 @@ import { renderInspector } from '../panels/inspector.js';
 import { renderMembers } from '../panels/members.js';
 import { openGenerateModal, openExperienceModal, onboardingSkipped } from '../panels/modals.js';
 import { addChild, defaultParentId, clearSelection, aiDirection } from '../actions.js';
+import { currentProjectId, rememberProjectLinks } from '../utils/project.js';
 
 const PREFS_KEY = 'nodi.prefs';
 const loadPrefs = () => { try { return JSON.parse(localStorage.getItem(PREFS_KEY) ?? '{}'); } catch { return {}; } };
@@ -26,7 +27,8 @@ const savePrefs = (p) => { try { localStorage.setItem(PREFS_KEY, JSON.stringify(
 
 // 1) 인증 + 프로젝트 ---------------------------------------------------------------
 const session = await requireAuth();
-const pid = new URLSearchParams(location.search).get('project');
+const pid = currentProjectId();
+rememberProjectLinks();
 if (!pid) location.replace('index.html');
 
 setState({ user: session.user, session });
