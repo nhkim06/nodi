@@ -2,26 +2,8 @@
 // + 원근 그리드 배경(.bg-grid)을 body 맨 앞에 한 번 넣는다.
 import { h } from '../utils/dom.js';
 
-const SVG_NS = 'http://www.w3.org/2000/svg';
-function svg(tag, attrs, ...children) {
-  const el = document.createElementNS(SVG_NS, tag);
-  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
-  el.append(...children);
-  return el;
-}
-
-/** 보라 팔각형 + 흰 둥근 사각형 로고 마크 */
 export function logoMark(size = 28) {
-  const id = `lg${Math.random().toString(36).slice(2, 7)}`;
-  return svg('svg', { width: size, height: size, viewBox: '0 0 32 32', 'aria-hidden': 'true', class: 'logo__mark' },
-    svg('defs', {}, svg('linearGradient', { id, x1: '0', y1: '0', x2: '1', y2: '1' },
-      svg('stop', { offset: '0', 'stop-color': '#9A82FA' }),
-      svg('stop', { offset: '1', 'stop-color': '#6243E6' }))),
-    svg('path', {
-      d: 'M10 2h12l8 8v12l-8 8H10l-8-8V10z', fill: `url(#${id})`,
-      stroke: `url(#${id})`, 'stroke-width': '3', 'stroke-linejoin': 'round',
-    }),
-    svg('rect', { x: '10', y: '9.5', width: '12.5', height: '13', rx: '3.2', fill: '#fff', transform: 'rotate(-6 16 16)' }));
+  return h('img', { class: 'logo__mark', src: 'favicon.svg', width: size, height: size, alt: '' });
 }
 
 export const logo = (href = 'index.html#/home') => h('a', { class: 'logo', href, 'aria-label': 'NO:DI 홈' }, logoMark(), h('span', {}, 'NO:DI'));

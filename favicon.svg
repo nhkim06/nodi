@@ -1,10 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="84 29 869 869">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#9A82FA"/>
-      <stop offset="1" stop-color="#6243E6"/>
+    <linearGradient id="purple" gradientUnits="userSpaceOnUse" x1="229" y1="183" x2="774" y2="769">
+      <stop offset="0" stop-color="#9c8bdf"/>
+      <stop offset=".28" stop-color="#9583dc"/>
+      <stop offset=".55" stop-color="#7d66d0"/>
+      <stop offset=".79" stop-color="#684fca"/>
+      <stop offset="1" stop-color="#6b50ce"/>
     </linearGradient>
   </defs>
-  <path d="M10 2h12l8 8v12l-8 8H10l-8-8V10z" fill="url(#g)" stroke="url(#g)" stroke-width="3" stroke-linejoin="round"/>
-  <rect x="10" y="9.5" width="12.5" height="13" rx="3.2" fill="#fff" transform="rotate(-6 16 16)"/>
+  <path fill="url(#purple)" fill-rule="evenodd" d="
+    M343 29.5 H694
+    Q712 29.5 725 42.5 L940 257.5 Q952.5 270 952.5 288
+    V640 Q952.5 658 940 670.5 L725 885.5 Q712 898 694 898
+    H343 Q325 898 312 885.5 L97 670.5 Q84.5 658 84.5 640
+    V288 Q84.5 270 97 257.5 L312 42.5 Q325 29.5 343 29.5 Z
+    M484 253.5 H708 A22 22 0 0 1 730 275.5
+    V501 A171.5 171.5 0 0 1 558.5 672.5
+    H333.5 A22 22 0 0 1 311.5 650.5
+    V426 A172.5 172.5 0 0 1 484 253.5 Z"/>
 </svg>
