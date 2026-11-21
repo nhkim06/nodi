@@ -80,7 +80,7 @@
 .signal-light--yellow { background: var(--signal-yellow); }
 .signal-light--red { background: var(--signal-red); }
 .signal-light--off { background: var(--signal-off); }
-.signal-time { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+.signal-time { display: flex; align-items: center; font-size: 12px; color: var(--text-muted); margin-top: 6px; }
 
 /* ───────── 오른쪽 패널 ───────── */
 .panel-title { padding: var(--sp-3); font-weight: 800; font-size: 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: var(--sp-2); }

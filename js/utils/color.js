@@ -21,7 +21,7 @@ export function avatar(member, { size } = {}) {
 export const SIGNALS = {
   green: { label: '진행 중' },
   yellow: { label: '쉬는 중' },
-  red: { label: '막힘·도움 필요' },
+  red: { label: '도움 필요' },
   off: { label: '오프라인' },
 };
 

@@ -252,7 +252,7 @@ startRouter(() => {
 // 6) Realtime + 신호등 -----------------------------------------------------------------
 subscribeProject(pid);
 refreshSignalTime();
-setInterval(refreshSignalTime, 60_000);
+setInterval(refreshSignalTime, 15_000);
 // 오래된 green 보정 표시를 위해 주기적으로 팀원 패널 갱신
 setInterval(() => setState({ members: getState().members }), 5 * 60_000);
 
