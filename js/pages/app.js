@@ -1,3 +1,4 @@
+import { icon } from '../utils/icons.js';
 // 메인 워크스페이스 부트스트랩 + 렌더 루프
 import { supabase } from '../supabase.js';
 import { requireAuth, signOut } from '../auth.js';
@@ -179,7 +180,7 @@ subscribe(renderAll);
 
 function renderBreadcrumb(s) {
   const focus = s.focus.filter((id) => s.nodes.has(id));
-  const items = [h('button', { class: ['breadcrumb__item', !focus.length && 'breadcrumb__item--current'], onclick: () => goHome() }, 'Home')];
+  const items = [h('button', { class: ['breadcrumb__item', !focus.length && 'breadcrumb__item--current'], onclick: () => goHome() }, icon('home'), 'Home')];
   if (focus.length) {
     const path = ancestorsOf(focus[0]).filter((n) => n.parent_id);   // 루트(=Home)는 제외
     for (const n of path) {
@@ -204,7 +205,7 @@ function renderToolbar(s) {
   render($('#toolbar'),
     h('div', { class: 'toolbar__group' },
       h('button', { class: 'btn btn--sm', title: '선택한 노드(없으면 루트)의 자식 추가 (Tab)', onclick: () => addChild(defaultParentId()) }, '＋ 노드'),
-      h('button', { class: 'btn btn--sm btn--primary', onclick: () => openGenerateModal(sel.length ? sel : s.focus) }, 'AI 생성')),
+      h('button', { class: 'btn btn--sm btn--primary', onclick: () => openGenerateModal(sel.length ? sel : s.focus) }, icon('sparkles'), 'AI 생성')),
     h('span', { class: 'toolbar__sep' }),
     h('div', { class: 'toolbar__group' },
       h('button', {
@@ -222,8 +223,8 @@ function renderToolbar(s) {
       }, 'AI 말풍선 숨기기')),
     h('span', { class: 'spacer' }),
     s.focus.length > 0 && h('div', { class: 'toolbar__group' },
-      h('button', { class: 'btn btn--sm', onclick: () => aiDirection(s.focus) }, '방향 추천'),
-      h('button', { class: 'btn btn--sm', onclick: () => goHome() }, '홈으로')),
+      h('button', { class: 'btn btn--sm', onclick: () => aiDirection(s.focus) }, icon('compass'), '방향 추천'),
+      h('button', { class: 'btn btn--sm', onclick: () => goHome() }, icon('home'), '홈으로')),
   );
 }
 

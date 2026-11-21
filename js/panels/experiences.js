@@ -1,3 +1,4 @@
+import { icon } from '../utils/icons.js';
 // 경험 카드 편집기 (F16) — 온보딩(index), 개인 페이지(me), 워크스페이스 모달에서 함께 쓴다.
 // 경험 카드는 사용자 단위라 한 번 입력하면 다른 팀플에서도 그대로 쓰인다.
 import { h, toast, spinner } from '../utils/dom.js';
@@ -109,7 +110,7 @@ export function experienceEditor({ userId, onChange, compact = false }) {
         ex.detail && h('div', { class: 'small muted' }, ex.detail),
         (ex.tags ?? []).length > 0 && h('div', { class: 'row row--wrap', style: { marginTop: '4px' } },
           ex.tags.map((t) => h('span', { class: 'chip chip--sm' }, `#${t}`)))),
-      h('button', { class: 'btn btn--sm btn--ghost', title: '수정', 'aria-label': '경험 카드 수정', onclick: () => { editingId = ex.id; draw(); } }, '수정'),
+      h('button', { class: 'btn btn--sm btn--ghost', title: '수정', 'aria-label': '경험 카드 수정', onclick: () => { editingId = ex.id; draw(); } }, icon('edit'), '수정'),
       h('button', {
         class: 'icon-btn', title: '삭제', 'aria-label': '경험 카드 삭제',
         onclick: async () => {

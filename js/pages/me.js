@@ -1,3 +1,4 @@
+import { icon } from '../utils/icons.js';
 // 나의 작업 (프로젝트 상세 › 나의 작업): 담당 노드 확인(칸반) / 내 할 일 / 작업 상태 시간 / 활동 내역 / 받은 좋아요
 // 나의 정보 · 프로젝트 경험 입력은 HOME › account 로 옮겼다 (IA v2).
 import { supabase } from '../supabase.js';
@@ -112,27 +113,27 @@ function draw() {
       h('a', { href: `app.html?project=${pid}` }, '← 프로젝트 상세'),
       h('span', { class: 'spacer' }),
       h('span', { class: 'muted small' }, state.project.name),
-      h('a', { class: 'btn btn--ghost btn--sm', href: 'index.html#/account' }, '나의 정보')),
+      h('a', { class: 'btn btn--ghost btn--sm', href: 'index.html#/account' }, icon('user'), '나의 정보')),
     h('h1', { class: 'page__title', style: { marginBottom: '16px' } }, `${state.profile.display_name}님의 작업`),
 
     h('div', { class: 'card', style: { marginBottom: '16px' } },
-      h('div', { class: 'card__title' }, `담당 노드 · ${done}/${state.assigned.length} 완료`),
+      h('div', { class: 'card__title' }, icon('check'), `담당 노드 · ${done}/${state.assigned.length} 완료`),
       state.assigned.length === 0
         ? h('p', { class: 'muted small' }, '아직 담당 노드가 없어요. 아이디어 맵에서 노드를 팀원 목록의 내 이름 위로 끌어다 놓아 보세요.')
         : kanban()),
 
     h('div', { class: 'grid grid--2' },
       h('div', { class: 'card' },
-        h('div', { class: 'card__title' }, `내 할 일 · ${todoDone}/${state.todos.length}`),
+        h('div', { class: 'card__title' }, icon('doc'), `내 할 일 · ${todoDone}/${state.todos.length}`),
         todoList()),
       h('div', { class: 'card' },
-        h('div', { class: 'card__title' }, '작업 상태 시간'),
+        h('div', { class: 'card__title' }, icon('clock'), '작업 상태 시간'),
         h('div', { class: 'small muted', style: { marginBottom: '6px' } }, '오늘'),
         signalBars(state.today),
         h('div', { class: 'small muted', style: { margin: '12px 0 6px' } }, '최근 7일'),
         signalBars(state.week)),
       h('div', { class: 'card' },
-        h('div', { class: 'card__title' }, `받은 좋아요 (${state.praises.length})`),
+        h('div', { class: 'card__title' }, icon('heart'), `받은 좋아요 (${state.praises.length})`),
         state.praises.length === 0 && h('p', { class: 'muted small' }, '아직 받은 좋아요가 없어요.'),
         state.praises.slice(0, 20).map((p) => h('div', { class: 'feed-item' },
           h('div', {},
@@ -140,7 +141,7 @@ function draw() {
             p.message && h('div', {}, p.message)),
           h('span', { class: 'feed-item__time' }, relTime(p.created_at))))),
       h('div', { class: 'card' },
-        h('div', { class: 'card__title' }, '내 활동 내역'),
+        h('div', { class: 'card__title' }, icon('doc'), '내 활동 내역'),
         state.activity.length === 0 && h('p', { class: 'muted small' }, '아직 활동이 없어요.'),
         state.activity.map((a) => h('div', { class: 'feed-item' },
           h('span', {}, (ACTIONS[a.action] ?? ((m) => `${a.action} ${m.title ?? ''}`))(a.meta ?? {})),

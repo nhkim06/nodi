@@ -1,3 +1,4 @@
+import { icon } from '../utils/icons.js';
 // 모달: 공통 틀 + 문서 업로드, AI 생성, 점검 결과, 역할 추천, 링크, 칭찬, 막힘 도움
 import { h, toast, spinner } from '../utils/dom.js';
 import { getState, setState, rootNode } from '../store.js';
@@ -109,7 +110,7 @@ export function openDocModal() {
   });
   textArea.addEventListener('input', () => { if (!textArea.value.trim()) file = null; });
 
-  const submit = h('button', { class: 'btn btn--primary' }, '요구사항 분석');
+  const submit = h('button', { class: 'btn btn--primary' }, icon('sparkles'), '요구사항 분석');
   const m = openModal({
     title: '과제 문서 올리기',
     wide: true,
@@ -128,7 +129,7 @@ export function openDocModal() {
       doc = await saveDoc({ file, text, fileName: file?.name });
     } catch {
       submit.disabled = false;
-      submit.textContent = '요구사항 분석';
+      submit.replaceChildren(icon('sparkles'), '요구사항 분석');
       return;
     }
     m.close();
@@ -169,7 +170,7 @@ export function openGenerateModal(parentIds) {
   const go = () => { m.close(); aiGenerate(targets, { count: Number(count.value), hint: hint.value.trim() }); };
   hint.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.isComposing) go(); });
   const m = openModal({
-    title: 'AI 아이디어 생성',
+    title: [icon('sparkles'), 'AI 아이디어 생성'],
     body: [
       h('p', { class: 'small muted', style: { marginBottom: '12px' } },
         '부모 노드: ', targets.map((id) => nodes.get(id)?.title).join(', ')),
@@ -190,7 +191,7 @@ export function showReviewResult(res) {
   const { members } = getState();
 
   const m = openModal({
-    title: '전체 점검 결과',
+    title: [icon('search'), '전체 점검 결과'],
     wide: true,
     body: [
       res.summary && h('div', { class: 'summary-box' }, res.summary),
@@ -265,7 +266,7 @@ export function showRolesResult(res) {
 
   const apply = h('button', { class: 'btn btn--primary', disabled: !rows.length }, '선택 항목 적용');
   const m = openModal({
-    title: '역할 분담 추천', wide: true, body,
+    title: [icon('users'), '역할 분담 추천'], wide: true, body,
     footer: [h('button', { class: 'btn', onclick: () => m.close() }, '닫기'), apply],
   });
   apply.addEventListener('click', async () => {
@@ -303,7 +304,7 @@ export function openLinkModal(nodeId = null) {
     } catch { /* 토스트 처리됨 */ }
   };
   const m = openModal({
-    title: '작업 링크 추가',
+    title: [icon('link'), '작업 링크 추가'],
     body: [
       node && h('p', { class: 'small muted', style: { marginBottom: '8px' } }, `연결할 노드: ${node.title}`),
       h('div', { class: 'field' }, h('label', {}, '주소'), url),
@@ -342,14 +343,14 @@ export function openPraiseModal(toUser = null) {
     } catch { /* 토스트 처리됨 */ }
   };
   const m = openModal({
-    title: '팀원에게 좋아요 보내기',
+    title: [icon('heart'), '팀원에게 좋아요 보내기'],
     body: [
       h('div', { class: 'field' }, h('label', {}, '누구를?'), who),
       h('div', { class: 'field' }, h('label', {}, '태그 (선택)'), h('div', { class: 'row row--wrap' }, tagBtns)),
       h('div', { class: 'field' }, h('label', {}, '메시지 (선택)'), msg),
       h('p', { class: 'small faint' }, '같은 팀원에게는 하루 한 번 보낼 수 있어요. 좋아요 1번에 +0.3℃!'),
     ],
-    footer: [h('button', { class: 'btn', onclick: () => m.close() }, '취소'), h('button', { class: 'btn btn--primary', onclick: send }, '보내기')],
+    footer: [h('button', { class: 'btn', onclick: () => m.close() }, '취소'), h('button', { class: 'btn btn--primary', onclick: send }, icon('heart'), '보내기')],
   });
 }
 
@@ -368,12 +369,12 @@ export async function openHelpModal(message) {
   const { members } = getState();
   const helpers = (res.helpers ?? []).filter((id) => members.has(id));
   const m = openModal({
-    title: '막힘 도움',
+    title: [icon('warning'), '막힘 도움'],
     body: [
-      h('div', { class: 'card__title' }, '이렇게 해 보세요'),
+      h('div', { class: 'card__title' }, icon('bulb'), '이렇게 해 보세요'),
       h('ol', { style: { paddingLeft: '20px', margin: '0 0 12px' } }, (res.tips ?? []).map((t) => h('li', { style: { marginBottom: '6px' } }, t))),
       helpers.length > 0 && [
-        h('div', { class: 'card__title' }, '도와줄 수 있는 팀원'),
+        h('div', { class: 'card__title' }, icon('users'), '도와줄 수 있는 팀원'),
         res.helper_reason && h('p', { class: 'small muted', style: { marginBottom: '8px' } }, res.helper_reason),
         helpers.map((uid) => h('div', { class: 'row', style: { marginBottom: '6px' } },
           avatar(members.get(uid)), h('span', { class: 'grow' }, members.get(uid).profile?.display_name ?? '팀원'),
@@ -465,7 +466,7 @@ export function openPlanEditModal(nodeId) {
 
   const save = h('button', { class: 'btn btn--primary' }, '저장');
   const m = openModal({
-    title: `실행 계획 — ${node.title}`,
+    title: [icon('edit'), `실행 계획 — ${node.title}`],
     wide: true,
     body: [
       h('div', { class: 'row' }, h('div', { class: 'field' }, h('label', {}, '실행 가능성'), feas), h('div', { class: 'field grow' }, h('label', {}, '근거'), note)),
@@ -473,7 +474,7 @@ export function openPlanEditModal(nodeId) {
       h('div', { class: 'field' }, h('label', {}, 'MVP (반드시)'), mvp.el),
       h('div', { class: 'field' }, h('label', {}, '여유 있으면'), stretch.el),
       h('div', { class: 'field' }, h('label', {}, '범위 밖 (이번엔 안 함)'), out.el),
-      h('div', { class: 'field' }, h('label', {}, '리스크'), risks.el),
+      h('div', { class: 'field' }, h('label', {}, icon('warning'), '리스크'), risks.el),
       h('p', { class: 'small faint' }, '직접 수정한 계획은 AI가 다시 구체화하기 전에 덮어쓸지 확인해요.'),
     ],
     footer: [h('button', { class: 'btn', onclick: () => m.close() }, '취소'), save],

@@ -1,3 +1,4 @@
+import { icon } from '../utils/icons.js';
 // 오른쪽 패널 (A): 노드 선택 시 Inspector — [상세] / [🧭 실행 계획] 탭
 import { h, render, safeUrl, spinner } from '../utils/dom.js';
 import { avatar, STATUS, TASK_STATES, LINK_KINDS, BUBBLE_KINDS } from '../utils/color.js';
@@ -66,11 +67,11 @@ function single(s, node) {
     h('button', {
       class: ['insp-tab', tab === 'plan' && 'insp-tab--on'], role: 'tab', 'aria-selected': String(tab === 'plan'),
       onclick: () => setTab('plan'),
-    }, '실행 계획', plan?.feasibility ? h('span', { class: 'insp-tab__feas' }, `${plan.feasibility}/5`) : null));
+    }, icon('compass'), '실행 계획', plan?.feasibility ? h('span', { class: 'insp-tab__feas' }, `${plan.feasibility}/5`) : null));
 
   const footer = h('div', { class: 'panel-sec stack' },
-    h('button', { class: 'btn btn--block', onclick: () => goFocus([node.id]) }, '이 노드를 루트로 보기'),
-    !isRoot && h('button', { class: 'btn btn--danger btn--block', onclick: () => deleteWithConfirm([node.id]) }, '삭제'));
+    h('button', { class: 'btn btn--block', onclick: () => goFocus([node.id]) }, icon('search'), '이 노드를 루트로 보기'),
+    !isRoot && h('button', { class: 'btn btn--danger btn--block', onclick: () => deleteWithConfirm([node.id]) }, icon('trash'), '삭제'));
 
   if (tab === 'plan') return [head, tabs, planTab(s, node, { busy, reqMap, expMap }), footer];
   return [head, tabs, ...detailTab(s, node, { busy, reqMap, expMap, isRoot }), footer];
@@ -132,15 +133,15 @@ function detailTab(s, node, { busy, reqMap, expMap, isRoot }) {
         h('button', { class: 'icon-btn', title: '삭제', onclick: () => deleteLink(l.id).catch(() => {}) }, '✕')))),
 
     h('div', { class: 'panel-sec' },
-      h('div', { class: 'panel-sec__title' }, 'AI'),
+      h('div', { class: 'panel-sec__title' }, icon('sparkles'), 'AI'),
       h('div', { class: 'stack' },
         h('button', {
           class: 'btn btn--sm btn--block btn--primary', disabled: busy,
           onclick: () => { setTab('plan'); aiConcretize(node.id); },
-        }, busy ? 'AI 처리 중...' : '우리 팀 기준으로 구체화'),
-        h('button', { class: 'btn btn--sm btn--block', disabled: busy, onclick: () => aiFeedback(node.id) }, '이 노드 피드백 받기'),
-        h('button', { class: 'btn btn--sm btn--block', disabled: busy, onclick: () => openGenerateModal([node.id]) }, '하위 아이디어 생성'),
-        h('button', { class: 'btn btn--sm btn--block', disabled: busy, onclick: () => aiDirection([node.id]) }, '다음 방향 추천')),
+        }, busy ? 'AI 처리 중...' : [icon('compass'), '우리 팀 기준으로 구체화']),
+        h('button', { class: 'btn btn--sm btn--block', disabled: busy, onclick: () => aiFeedback(node.id) }, icon('message'), '이 노드 피드백 받기'),
+        h('button', { class: 'btn btn--sm btn--block', disabled: busy, onclick: () => openGenerateModal([node.id]) }, icon('bulb'), '하위 아이디어 생성'),
+        h('button', { class: 'btn btn--sm btn--block', disabled: busy, onclick: () => aiDirection([node.id]) }, icon('compass'), '다음 방향 추천')),
       comments.length > 0 && h('div', { style: { marginTop: '10px' } },
         comments.map((c) => h('div', { class: ['comment-item', `comment-item--${c.kind}`] },
           h('div', { class: 'row' }, h('span', { class: 'grow small faint' }, relTime(c.created_at)),
@@ -169,13 +170,13 @@ function todoSection(s, node, busy) {
   });
 
   return h('div', { class: 'panel-sec' },
-    h('div', { class: 'panel-sec__title' }, '할 일 목록',
+    h('div', { class: 'panel-sec__title' }, icon('check'), '할 일 목록',
       list.length > 0 && h('span', { class: 'side-sec__count' }, `${done}/${list.length}`),
       h('span', { class: 'spacer' }),
       h('button', {
         class: 'btn btn--ghost btn--sm', disabled: busy, title: '팀 경험 기준으로 실행 계획과 할 일을 만들어요',
         onclick: () => aiConcretize(node.id),
-      }, busy ? spinner() : 'AI로 만들기')),
+      }, busy ? spinner() : [icon('sparkles'), 'AI로 만들기'])),
     list.length === 0 && h('p', { class: 'small faint' }, '아직 없어요. AI로 만들면 실행 계획과 함께 할 일을 나눠 줘요.'),
     list.map((t) => h('div', { class: ['todo', t.done && 'todo--done'] },
       h('input', {
@@ -217,8 +218,8 @@ function planTab(s, node, { busy, reqMap, expMap }) {
 
   const concretizeBtn = h('button', {
     class: 'btn btn--sm btn--primary', disabled: busy, onclick: () => aiConcretize(node.id),
-  }, busy ? spinner() : detailed ? '다시 구체화' : '우리 팀 기준으로 구체화');
-  const editBtn = h('button', { class: 'btn btn--sm', onclick: () => openPlanEditModal(node.id) }, hasPlan ? '직접 수정' : '직접 작성');
+  }, busy ? spinner() : [icon('sparkles'), detailed ? '다시 구체화' : '우리 팀 기준으로 구체화']);
+  const editBtn = h('button', { class: 'btn btn--sm', onclick: () => openPlanEditModal(node.id) }, [icon('edit'), hasPlan ? '직접 수정' : '직접 작성']);
 
   const banners = [
     noExp && h('div', { class: 'plan-banner' },
@@ -226,7 +227,7 @@ function planTab(s, node, { busy, reqMap, expMap }) {
       h('button', { class: 'btn btn--ghost btn--sm', onclick: () => openExperienceModal() }, '내 경험 입력')),
     stale && h('div', { class: 'plan-banner plan-banner--stale' },
       '팀 경험이 바뀌었어요 — ',
-      h('button', { class: 'btn btn--ghost btn--sm', disabled: busy, onclick: () => aiConcretize(node.id) }, '다시 구체화')),
+      h('button', { class: 'btn btn--ghost btn--sm', disabled: busy, onclick: () => aiConcretize(node.id) }, icon('sparkles'), '다시 구체화')),
   ];
 
   if (!hasPlan) {
@@ -301,11 +302,11 @@ function multi(s, ids) {
         h('button', { class: 'status-btn status-btn--discarded', onclick: () => setStatusMany(ids, 'discarded') }, '✕ 버림')),
       anyDiscarded && h('button', { class: 'btn btn--sm', style: { marginTop: '6px' }, onclick: () => setStatusMany(ids, 'restore') }, '버린 노드 복구')),
     h('div', { class: 'panel-sec stack' },
-      h('button', { class: 'btn btn--primary btn--block', onclick: () => goFocus(ids) }, '선택한 노드들로 이어서 아이디에이션'),
-      h('button', { class: 'btn btn--block', onclick: () => openGenerateModal(ids) }, '각각 하위 아이디어 생성'),
-      h('button', { class: 'btn btn--block', onclick: () => aiDirection(ids) }, '방향 추천'),
+      h('button', { class: 'btn btn--primary btn--block', onclick: () => goFocus(ids) }, icon('search'), '선택한 노드들로 이어서 아이디에이션'),
+      h('button', { class: 'btn btn--block', onclick: () => openGenerateModal(ids) }, icon('bulb'), '각각 하위 아이디어 생성'),
+      h('button', { class: 'btn btn--block', onclick: () => aiDirection(ids) }, icon('compass'), '방향 추천'),
       h('p', { class: 'small faint' }, '팀원 이름 위로 끌어다 놓으면 한꺼번에 담당자로 지정돼요.'),
-      h('button', { class: 'btn btn--danger btn--block', onclick: () => deleteWithConfirm(ids) }, '선택 삭제'),
+      h('button', { class: 'btn btn--danger btn--block', onclick: () => deleteWithConfirm(ids) }, icon('trash'), '선택 삭제'),
       h('button', { class: 'btn btn--ghost btn--block', onclick: clearSelection }, '선택 해제')),
   ];
 }

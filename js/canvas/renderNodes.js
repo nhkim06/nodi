@@ -1,3 +1,4 @@
+import { icon } from '../utils/icons.js';
 // 노드 DOM 생성/갱신 (id 기준 keyed diff)
 import { h } from '../utils/dom.js';
 import { avatar } from '../utils/color.js';
@@ -52,8 +53,8 @@ function fill(el, node, s) {
   el.replaceChildren(...[
     h('div', { class: 'node__stripe' }, colors.map((c) => h('span', { style: { background: c } }))),
     h('div', { class: 'node__badges' },
-      node.is_candidate && h('span', { class: 'node__badge node__badge--candidate', title: '후보' }, '후보'),
-      node.source === 'ai' && h('span', { class: 'node__badge node__badge--ai', title: 'AI가 만든 아이디어' }, 'AI'),
+      node.is_candidate && h('span', { class: 'node__badge node__badge--candidate', title: '후보' }, icon('star'), '후보'),
+      node.source === 'ai' && h('span', { class: 'node__badge node__badge--ai', title: 'AI가 만든 아이디어' }, icon('sparkles'), 'AI'),
       node.status === 'adopted' && h('span', { class: 'node__badge node__badge--adopted', title: '채택' }, '✓'),
       node.status === 'discarded' && h('span', { class: 'node__badge node__badge--discarded', title: '버림' }, '✕'),
     ),
@@ -62,7 +63,7 @@ function fill(el, node, s) {
     (assignees.length > 0 || !!feas || (comments > 0 && s.filters.hideBubbles)) && h('div', { class: 'node__footer' },
       h('div', { class: 'node__avatars' }, assignees.slice(0, 5).map((a) => avatar(s.members.get(a.user_id)))),
       feasBadge(feas),
-      comments > 0 && s.filters.hideBubbles && h('span', { class: 'node__comments' }, `댓글 ${comments}개`),
+      comments > 0 && s.filters.hideBubbles && h('span', { class: 'node__comments' }, icon('message'), `댓글 ${comments}개`),
     ),
     s.aiBusy.has(node.id) && h('div', { class: 'node__spinner' }, h('span', { class: 'spinner' })),
   ].filter((c) => c instanceof Node));
