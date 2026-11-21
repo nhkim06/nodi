@@ -1,0 +1,109 @@
+/* 디자인 토큰 — 색상은 여기서만 정의하고 다른 CSS는 변수만 쓴다
+   NO:DI 디자인 (Figma '와씨톤' Page 4): 연회색 원근 그리드 배경 + 흰 플로팅 카드 + 보라 포인트 */
+:root {
+  /* 기본 */
+  --font: 'Inter', 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --bg: #F6F7F9;
+  --grid-line: rgba(70, 78, 120, 0.22);
+  --grid-line-soft: rgba(70, 78, 120, 0.10);
+  --canvas-bg: #FDFDFE;
+  --canvas-dot: #D9DBE2;
+  --surface: #FFFFFF;
+  --surface-2: #F6F6F8;
+  --surface-hover: #F2F2F6;
+  --border: #ECEDF1;
+  --border-strong: #D6D8DF;
+  --text: #0E1017;
+  --text-muted: #5E6270;
+  --text-faint: #A0A4B0;
+  --text-on-color: #FFFFFF;
+  --primary: #6C4FEF;
+  --primary-hover: #5A3CE0;
+  --primary-soft: #F1EEFE;
+  --primary-line: #CFC7F8;
+  --primary-grad: linear-gradient(180deg, #8F74F9 0%, #6A4CEB 100%);
+  --primary-glow: 0 0 0 3px rgba(143, 116, 249, 0.28), 0 10px 30px rgba(108, 79, 239, 0.22);
+  --danger: #DC2626;
+  --danger-soft: #FEF2F2;
+  --overlay: rgba(14, 16, 23, 0.38);
+  --shadow-sm: 0 1px 2px rgba(14, 16, 23, 0.04);
+  --shadow: 0 4px 16px rgba(14, 16, 23, 0.05);
+  --shadow-lg: 0 16px 40px rgba(14, 16, 23, 0.12);
+  --shadow-float: 0 8px 30px rgba(14, 16, 23, 0.05), 0 0 0 1px rgba(14, 16, 23, 0.03);
+  --focus-ring: 0 0 0 3px rgba(108, 79, 239, 0.22);
+
+  /* 노드 상태 (마인드맵: 기본은 연보라 테두리, 루트는 보라 채움) */
+  --node-border: #CFC7F8;
+  --edge: #C4C5CC;
+  --status-considering: #CFC7F8;
+  --status-considering-bg: #FFFFFF;
+  --status-adopted: #6C4FEF;
+  --status-adopted-bg: #F4F1FF;
+  --status-discarded: #C9CBD2;
+  --status-discarded-bg: #F4F4F6;
+  --candidate: #F59E0B;
+  --ai-badge: #7C3AED;
+  --selection: #6C4FEF;
+  --flash: rgba(124, 58, 237, 0.30);
+
+  /* 신호등 */
+  --signal-green: #22C55E;
+  --signal-yellow: #EAB308;
+  --signal-red: #EF4444;
+  --signal-off: #CBD5E1;
+  --signal-red-soft: #FEE2E2;
+
+  /* AI 말풍선 kind */
+  --bubble-praise: #16A34A;
+  --bubble-praise-bg: #F0FDF4;
+  --bubble-warning: #EA580C;
+  --bubble-warning-bg: #FFF7ED;
+  --bubble-suggestion: #2563EB;
+  --bubble-suggestion-bg: #EFF6FF;
+  --bubble-feedback: #4B5563;
+  --bubble-feedback-bg: #F9FAFB;
+  --bubble-gap: #7C3AED;
+  --bubble-gap-bg: #F5F3FF;
+
+  /* 커버리지 */
+  --cov-covered: #22C55E;
+  --cov-partial: #EAB308;
+  --cov-missing: #EF4444;
+
+  /* 실행 가능성 (1~5) */
+  --feas-low: #DC2626;
+  --feas-mid: #D97706;
+  --feas-high: #15803D;
+
+  /* 근거 칩: 요구사항 R* / 팀 경험 E* */
+  --ref-req: #4B5563;
+  --ref-req-bg: #F3F4F6;
+  --ref-exp: #0F766E;
+  --ref-exp-bg: #E6F6F4;
+
+  /* 실행 계획 범위 */
+  --scope-mvp: #15803D;
+  --scope-stretch: #2563EB;
+  --scope-out: #9CA3AF;
+  --banner-bg: #FFFBEB;
+  --banner-border: #FCD34D;
+
+  /* 간격 / 크기 */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --sidebar-w: 232px;
+  --inspector-w: 320px;
+  --collapsed-w: 48px;
+  --topbar-h: 48px;
+  --topnav-h: 92px;
+  --node-w: 200px;
+}

@@ -1,0 +1,12 @@
+# Supabase 접속 정보 (config.example.js 를 복사해서 만든다)
+js/config.js
+
+# Supabase CLI
+supabase/.temp/
+supabase/.branches/
+.env
+.env.*
+
+node_modules/
+.DS_Store
+Thumbs.db

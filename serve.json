@@ -1,0 +1,7 @@
+{
+  "cleanUrls": ["/"],
+  "directoryListing": false,
+  "rewrites": [
+    { "source": "/.env", "destination": "/index.html" }
+  ]
+}
